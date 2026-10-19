@@ -4,7 +4,7 @@ The assignment calls for a game prototype built around a single mechanic, due in
 
 ## What Changes
 
-- New Godot 4 (GDScript) 2D gray-box project with a web export, published to itch.io (or similar) for playtesting.
+- New Godot 4 (GDScript) 2D gray-box project with a web export, published to GitHub Pages for playtesting (itch.io is blocked in Russia, where playtesters are).
 - Core mechanic: drag ingredients from the pantry into a container — a **burger stack** (order matters, physics on drop, the top layer can be adjusted until the next pickup, stability can collapse it) or a **smoothie jar** (order doesn't matter, ratios and color blending). Sauces are bottles with limited doses, poured onto the burger as a stream that spreads into a visible sauce layer.
 - Balatro-style scoring with no customer preferences: each dish is served through the window and scored immediately as `Σ(base × freshness × amount) × (1 + Σ mult)`. Mult comes from structure, adjacency, ratio, and flavor-pair rules, plus named-recipe bonuses (e.g. "Struggle Burger", "Classic Cheese", "Green Machine").
 - Run structure: N days. Each day you serve as many dishes as your pantry allows, then close for the day and must pay a rising rent or the run ends.
@@ -30,5 +30,5 @@ The assignment calls for a game prototype built around a single mechanic, due in
 
 - New project; no existing code is affected.
 - Dependencies: Godot 4.x (a version with single-threaded web export), GDScript only (C# Godot projects cannot export to web).
-- Hosting: an itch.io page (or any static host) for browser playtests.
+- Hosting: GitHub Pages (the `gh-pages` branch, published by `let-me-cook/tools/deploy_pages.sh`); any static host works.
 - Out of scope for this change: customers and orders, art beyond gray-box shapes, audio polish, save/load, mobile controls. Stretch goals (in-day discard/reroll, boss days, overripe bonuses, discount stock) and the backlog gadgets from the design's catalog are listed in design and tasks but are not required.
