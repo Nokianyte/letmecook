@@ -1,0 +1,240 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/kitchen/kitchen.gd" id="1_kitchen"]
+[ext_resource type="Script" path="res://scenes/kitchen/pantry_panel.gd" id="2_pantry"]
+[ext_resource type="Script" path="res://scenes/kitchen/burger_board.gd" id="3_board"]
+[ext_resource type="Script" path="res://scenes/kitchen/serving_window.gd" id="4_window"]
+[ext_resource type="Script" path="res://ui/score_tally.gd" id="5_tally"]
+[ext_resource type="Script" path="res://scenes/kitchen/smoothie_jar.gd" id="6_jar"]
+[ext_resource type="Script" path="res://ui/counter_row.gd" id="7_counter"]
+
+[node name="Kitchen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kitchen")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.16, 0.16, 0.18, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TopBar" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="DayLabel" type="Label" parent="Margin/VBox/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Day 1/7"
+
+[node name="MoneyLabel" type="Label" parent="Margin/VBox/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "$0"
+
+[node name="RentLabel" type="Label" parent="Margin/VBox/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Rent today: $0"
+
+[node name="DayScoreLabel" type="Label" parent="Margin/VBox/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Today: 0 pts"
+
+[node name="HelpButton" type="Button" parent="Margin/VBox/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+tooltip_text = "How to play"
+text = "?"
+
+[node name="Spacer" type="Control" parent="Margin/VBox/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="CloseButton" type="Button" parent="Margin/VBox/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 36)
+layout_mode = 2
+text = "Close for the day"
+
+[node name="CounterBar" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CounterTitle" type="Label" parent="Margin/VBox/CounterBar"]
+layout_mode = 2
+text = "Gadgets"
+
+[node name="CounterRow" type="HBoxContainer" parent="Margin/VBox/CounterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+script = ExtResource("7_counter")
+
+[node name="Main" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Pantry" type="PanelContainer" parent="Margin/VBox/Main"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+script = ExtResource("2_pantry")
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/VBox/Main/Pantry"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Rows" type="VBoxContainer" parent="Margin/VBox/Main/Pantry/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Center" type="VBoxContainer" parent="Margin/VBox/Main"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SpoiledNotice" type="Label" parent="Margin/VBox/Main/Center"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.45, 1)
+text = "Spoiled overnight:"
+autowrap_mode = 3
+
+[node name="Stations" type="HBoxContainer" parent="Margin/VBox/Main/Center"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="BurgerBoard" type="Control" parent="Margin/VBox/Main/Center/Stations"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("3_board")
+
+[node name="JarColumn" type="VBoxContainer" parent="Margin/VBox/Main/Center/Stations"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SmoothieJar" type="Control" parent="Margin/VBox/Main/Center/Stations/JarColumn"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("6_jar")
+
+[node name="JarStatus" type="Label" parent="Margin/VBox/Main/Center/Stations/JarColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Jar 0/8"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="JarButtons" type="HBoxContainer" parent="Margin/VBox/Main/Center/Stations/JarColumn"]
+layout_mode = 2
+
+[node name="EmptyJarButton" type="Button" parent="Margin/VBox/Main/Center/Stations/JarColumn/JarButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Empty"
+
+[node name="BlendButton" type="Button" parent="Margin/VBox/Main/Center/Stations/JarColumn/JarButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Blend & serve"
+
+[node name="Controls" type="HBoxContainer" parent="Margin/VBox/Main/Center"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ClearButton" type="Button" parent="Margin/VBox/Main/Center/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "Clear"
+
+[node name="ServeButton" type="Button" parent="Margin/VBox/Main/Center/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 40)
+layout_mode = 2
+text = "Serve"
+
+[node name="StatusLabel" type="Label" parent="Margin/VBox/Main/Center/Controls"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 2
+
+[node name="Window" type="PanelContainer" parent="Margin/VBox/Main"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+script = ExtResource("4_window")
+
+[node name="VBox" type="VBoxContainer" parent="Margin/VBox/Main/Window"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="WindowTitle" type="Label" parent="Margin/VBox/Main/Window/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Served today: 0"
+horizontal_alignment = 1
+
+[node name="Tally" type="VBoxContainer" parent="Margin/VBox/Main/Window/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+script = ExtResource("5_tally")
+
+[node name="Separator" type="HSeparator" parent="Margin/VBox/Main/Window/VBox"]
+layout_mode = 2
+
+[node name="Dishes" type="VBoxContainer" parent="Margin/VBox/Main/Window/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TagGadget" format=3]
+
+[ext_resource type="Script" path="res://rules/tag_gadget.gd" id="1_gadget"]
+
+[resource]
+script = ExtResource("1_gadget")
+id = &"pro_squeeze_bottle"
+display_name = "Pro Squeeze Bottle"
+description = "Sauce layers give ×2 chips"
+price = 4
+station = 1
+condition = 0
+count = 5
+tag = &""
+threshold = 0
+effect = 0
+amount = 1.0

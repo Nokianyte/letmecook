@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Recipe" format=3]
+
+[ext_resource type="Script" path="res://rules/recipe.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+display_name = "Double Cheese"
+station = 0
+match_mode = 0
+ingredients = Array[StringName]([&"bun", &"patty", &"cheese", &"patty", &"cheese", &"bun"])
+mult_bonus = 3.0

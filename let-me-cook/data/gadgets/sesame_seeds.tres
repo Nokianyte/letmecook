@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TagGadget" format=3]
+
+[ext_resource type="Script" path="res://rules/tag_gadget.gd" id="1_gadget"]
+
+[resource]
+script = ExtResource("1_gadget")
+id = &"sesame_seeds"
+display_name = "Sesame Seeds"
+description = "×1.2 mult if the burger has buns at both ends"
+price = 8
+station = 1
+condition = 1
+count = 0
+tag = &""
+threshold = 0
+effect = 2
+amount = 1.2

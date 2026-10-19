@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" path="res://rules/ingredient.gd" id="1_ingredient"]
+
+[resource]
+script = ExtResource("1_ingredient")
+id = &"blueberry"
+display_name = "Blueberry"
+color = Color(0.25, 0.25, 0.75, 1)
+size = Vector2(30, 24)
+category = 2
+price = 3
+base_chips = 8.0
+tags = Array[StringName]([&"smoothie", &"fruit"])
+burger_ok = false
+smoothie_ok = true
+smoothie_role = 0
+pairs_with = Array[StringName]([&"yogurt", &"strawberry"])

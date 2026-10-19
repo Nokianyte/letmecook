@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="LuckyCoinGadget" format=3]
+
+[ext_resource type="Script" path="res://rules/lucky_coin_gadget.gd" id="1_gadget"]
+
+[resource]
+script = ExtResource("1_gadget")
+id = &"lucky_coin"
+display_name = "Lucky Coin"
+description = "The first reroll each night is free"
+price = 3

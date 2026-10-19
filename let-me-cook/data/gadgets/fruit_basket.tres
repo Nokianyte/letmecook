@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TagGadget" format=3]
+
+[ext_resource type="Script" path="res://rules/tag_gadget.gd" id="1_gadget"]
+
+[resource]
+script = ExtResource("1_gadget")
+id = &"fruit_basket"
+display_name = "Fruit Basket"
+description = "+1 mult per different fruit in a smoothie"
+price = 5
+station = 2
+condition = 0
+count = 2
+tag = &"fruit"
+threshold = 0
+effect = 1
+amount = 1.0

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Recipe" format=3]
+
+[ext_resource type="Script" path="res://rules/recipe.gd" id="1_recipe"]
+
+[resource]
+script = ExtResource("1_recipe")
+display_name = "Berry Blast"
+station = 1
+match_mode = 1
+ingredients = Array[StringName]([&"strawberry", &"blueberry", &"yogurt"])
+mult_bonus = 2.0

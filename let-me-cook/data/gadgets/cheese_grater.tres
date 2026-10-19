@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TagGadget" format=3]
+
+[ext_resource type="Script" path="res://rules/tag_gadget.gd" id="1_gadget"]
+
+[resource]
+script = ExtResource("1_gadget")
+id = &"cheese_grater"
+display_name = "Cheese Grater"
+description = "+0.5 mult per cheese–patty melt (doubles the melt bonus)"
+price = 4
+station = 1
+condition = 0
+count = 3
+tag = &""
+threshold = 0
+effect = 1
+amount = 0.5

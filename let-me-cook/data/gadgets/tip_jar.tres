@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TipJarGadget" format=3]
+
+[ext_resource type="Script" path="res://rules/tip_jar_gadget.gd" id="1_gadget"]
+
+[resource]
+script = ExtResource("1_gadget")
+id = &"tip_jar"
+display_name = "Tip Jar"
+description = "+$2 for every dish served"
+price = 6
+tip = 2

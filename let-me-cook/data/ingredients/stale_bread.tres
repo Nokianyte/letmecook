@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" path="res://rules/ingredient.gd" id="1_ingredient"]
+
+[resource]
+script = ExtResource("1_ingredient")
+id = &"stale_bread"
+display_name = "Stale Bread"
+color = Color(0.78, 0.68, 0.5, 1)
+size = Vector2(170, 26)
+category = 0
+price = 1
+base_chips = 2
+tags = Array[StringName]([&"bun", &"bread"])

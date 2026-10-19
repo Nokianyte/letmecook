@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" path="res://rules/ingredient.gd" id="1_ingredient"]
+
+[resource]
+script = ExtResource("1_ingredient")
+id = &"onion"
+display_name = "Onion"
+color = Color(0.92, 0.88, 0.95, 1)
+size = Vector2(140, 10)
+category = 1
+price = 1
+base_chips = 2
+tags = Array[StringName]([&"veg"])
