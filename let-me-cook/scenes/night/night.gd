@@ -100,10 +100,7 @@ func _offer_card(offer: ShopOffer) -> Control:
 		detail = "bottle, %d doses · %s" % [ingredient.doses, detail]
 	if offer.sold:
 		return _card(name, detail, ingredient.color, "Sold", false, Callable())
-	var buy := "Buy $%d" % offer.price
-	if offer.full_price > offer.price:
-		buy += " (save $%d)" % (offer.full_price - offer.price)
-	return _card(name, detail, ingredient.color, buy, RunState.money >= offer.price,
+	return _card(name, detail, ingredient.color, "Buy $%d" % offer.price, RunState.money >= offer.price,
 			RunState.buy_offer.bind(offer))
 
 

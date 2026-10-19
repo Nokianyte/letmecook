@@ -24,11 +24,11 @@ During each night phase the shop SHALL offer a market of a configured number of 
 - **THEN** buying that slot is disabled
 
 ### Requirement: Bulk discount
-Stock slots with more than one unit SHALL be cheaper per unit: the price is the unit price × quantity, reduced by a configured fraction (default 10%) for each unit beyond the first, rounded to the nearest dollar. The card MUST show how much the bundle saves.
+Stock slots with more than one unit SHALL be cheaper per unit: the price is the unit price × quantity, reduced by a configured fraction (default 10%) for each unit beyond the first, rounded to the nearest dollar. The card MUST show only the bundle's price, so players work out the saving themselves.
 
 #### Scenario: Patty bundles
 - **WHEN** patties cost $4 each and the discount is 10% per extra unit
-- **THEN** one patty costs $4, two cost $7 (saving $1), and three cost $10 (saving $2)
+- **THEN** one patty costs $4, two cost $7, and three cost $10
 
 #### Scenario: Cheap items
 - **WHEN** onions cost $1 each

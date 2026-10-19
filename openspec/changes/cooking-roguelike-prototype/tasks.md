@@ -75,7 +75,7 @@
 
 ## 8. Day 7 — Ship
 
-- [x] 8.0 Bulk discount: 10% off per extra unit in a stock slot, rounded; cards show the saving
+- [x] 8.0 Bulk discount: 10% off per extra unit in a stock slot, rounded; cards show only the price
 - [x] 8.1 Bug-fix pass on drag edge cases (dropping during settle, re-dragging the live layer, pouring an empty bottle, fridge full, reordering gadgets)
 - [x] 8.2 Short how-to-play screen explaining chips × mult, freshness, the fridge, and gadgets
 - [x] 8.3 Final web export and a public page: GitHub Pages at https://nokianyte.github.io/letmecook/ (itch.io is blocked in Russia); README describes the single mechanic
