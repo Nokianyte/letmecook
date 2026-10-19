@@ -167,7 +167,7 @@ func _unit_button(unit: IngredientUnit, fridge_full: bool) -> Button:
 	button.custom_minimum_size = UNIT_BUTTON_SIZE
 	button.text = "%s %d%%" % [unit.ingredient.display_name, now]
 	if tomorrow != now:
-		button.text += " → %d%%" % tomorrow
+		button.text += " » %d%%" % tomorrow
 	if unit.ingredient.is_sauce():
 		button.tooltip_text = "%d/%d doses" % [unit.doses_left, unit.ingredient.doses]
 	button.add_theme_color_override("font_color", unit.ingredient.color.lightened(0.3))
