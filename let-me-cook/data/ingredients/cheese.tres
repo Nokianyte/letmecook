@@ -11,3 +11,4 @@ size = Vector2(165, 8)
 price = 30
 base_chips = 4.0
 tags = Array[StringName]([&"cheese", &"dairy"])
+crossover = true

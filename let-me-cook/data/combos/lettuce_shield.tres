@@ -6,7 +6,7 @@
 script = ExtResource("1_combo")
 id = &"lettuce_shield"
 display_name = "Lettuce shield"
-rule = "lettuce on the bottom bun"
+rule = "lettuce on bottom bun"
 station = 0
 mult = 0.5
 starter = false

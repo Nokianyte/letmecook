@@ -71,6 +71,21 @@ func _initialize() -> void:
 	check(melt_lines.size() == 3 and Scoring.combo_counts(r) == {&"bun_ends": 1, &"lettuce_shield": 1, &"veg_crown": 1}, "combo lines carry their combo id")
 	check(Scoring.combo_counts(score([&"patty", &"cheese", &"patty", &"cheese"])).get(&"melt") == 3, "combo_counts counts repeats")
 
+	print("[secret crossover combos]")
+	r = score([&"bun", &"patty", &"banana", &"bun"])
+	check(mult_labels(r) == ["Bun ends", "The Elvis"], "The Elvis: banana on a patty (%s)" % [mult_labels(r)])
+	check(mult_labels(score([&"bun", &"cheese", &"strawberry", &"bun"])).has("Cheesecake"), "Cheesecake: strawberry on cheese")
+	check(mult_labels(score([&"bun", &"spinach", &"lettuce", &"bun"])).has("Green giant"), "Green giant: spinach next to lettuce")
+	var shake := Dish.new(Dish.Station.SMOOTHIE)
+	for id in [&"patty", &"milk", &"milk"]:
+		shake.layers.append(DishLayer.new(rs.get_ingredient(id), 1.0))
+	check(mult_labels(Scoring.score_dish(shake, rs.data)).has("Protein shake"), "Protein shake: patty + milk in the jar")
+	var soup := Dish.new(Dish.Station.SMOOTHIE)
+	for id in [&"tomato", &"onion", &"water"]:
+		soup.layers.append(DishLayer.new(rs.get_ingredient(id), 1.0))
+	check(mult_labels(Scoring.score_dish(soup, rs.data)).has("Gazpacho"), "Gazpacho: tomato + onion + water")
+	check(rs.data.combos.filter(func(c): return c.secret).size() == 5, "five secret combos")
+
 	print("[grouping]")
 	var grouped := ScoreTally.group_lines(score([&"bun", &"patty", &"cheese", &"patty", &"cheese", &"bun"]).lines)
 	var texts_g = grouped.map(func(l): return ScoreTally.line_text(l))

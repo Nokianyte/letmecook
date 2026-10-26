@@ -29,11 +29,15 @@ enum SmoothieRole { NONE, LIQUID, THICK }
 ## Free-form tags used by scoring rules and recipes, e.g. &"bun", &"sauce", &"cheese".
 @export var tags: Array[StringName] = []
 
-@export_group("Burger")
+@export_group("Stations")
+## Home station: decides which shop sells it (market or smoothie bar).
 @export var burger_ok: bool = true
 
-@export_group("Smoothie")
 @export var smoothie_ok: bool = false
+## Can also go into the other station (a burger solid in the jar, fruit on a burger).
+@export var crossover: bool = false
+
+@export_group("Smoothie")
 @export var smoothie_role: SmoothieRole = SmoothieRole.NONE
 ## Ingredients that taste good with this one in a smoothie (checked both ways).
 @export var pairs_with: Array[StringName] = []
@@ -45,3 +49,11 @@ func is_sauce() -> bool:
 
 func has_tag(tag: StringName) -> bool:
 	return tags.has(tag)
+
+
+func fits_burger() -> bool:
+	return not is_sauce() and (burger_ok or crossover)
+
+
+func fits_jar() -> bool:
+	return not is_sauce() and (smoothie_ok or crossover)

@@ -88,7 +88,7 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if not (data is Dictionary and data.get("unit") is IngredientUnit):
 		return false
 	var unit: IngredientUnit = data.unit
-	if not unit.ingredient.burger_ok or unit.ingredient.is_sauce():
+	if not unit.ingredient.fits_burger():
 		return false
 	if data.get("from_board", false):
 		return unit == _dragged_live_unit

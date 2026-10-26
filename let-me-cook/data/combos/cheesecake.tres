@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Combo" format=3]
+
+[ext_resource type="Script" path="res://rules/combo.gd" id="1_combo"]
+
+[resource]
+script = ExtResource("1_combo")
+id = &"cheesecake"
+display_name = "Cheesecake"
+rule = "strawberry on cheese"
+station = 0
+mult = 1.0
+starter = false
+secret = true
+kind = 0
+pattern = Array[StringName]([&"strawberry", &"cheese"])
+anchor = 0
+either_order = true
+each = false
+solids_only = false

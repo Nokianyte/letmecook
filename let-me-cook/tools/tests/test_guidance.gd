@@ -156,16 +156,23 @@ func _initialize() -> void:
 	rs.discovered.clear()
 	rs.load_discoveries()  # what a new run or a reload does
 	check(rs.discovered.has(&"lettuce_shield") and rs.discovered.has(&"double_decker"), "discoveries are loaded back from the save")
+	check(combo_board._hidden_label != null and combo_board._hidden_label.text.contains("secret"), "secrets are hinted, not counted: %s" % combo_board._hidden_label.text)
+	for combo in rs.data.combos:
+		if not combo.secret:
+			rs.discover(combo)
+	await frames(2)
+	check(combo_board.hidden_count() == 0 and combo_board._hidden_label.text.begins_with("? secret combos"), "every regular combo found: only the secret hint (%s)" % combo_board._hidden_label.text)
+	check(not combo_board.shown_combos().any(func(c): return c.secret), "undiscovered secrets aren't listed")
 	for combo in rs.data.combos:
 		rs.discover(combo)
 	await frames(2)
-	check(combo_board.shown_combos().size() == 11 and combo_board._hidden_label == null, "everything discovered: 11 burger combos, no counter cell")
+	check(combo_board.shown_combos().size() == 14 and combo_board._hidden_label == null, "everything discovered: 14 burger combos, no counter cell")
 	var content: Vector2 = combo_board._grid.get_combined_minimum_size()
 	check(content.x <= combo_board.size.x and content.y <= combo_board.size.y, "all burger combos fit the board (%s in %s)" % [content, combo_board.size])
 	check(is_equal_approx(combo_board.size.y, height), "...at the same height")
 	rs.has_blender = true
 	combo_board.show_dish(Dish.Station.SMOOTHIE, null)
-	check(combo_board.station == Dish.Station.SMOOTHIE and combo_board.shown_combos().size() == 6 and combo_board._chips.has(&"berry_blast"), "smoothie dish: smoothie combos")
+	check(combo_board.station == Dish.Station.SMOOTHIE and combo_board.shown_combos().size() == 8 and combo_board._chips.has(&"protein_shake"), "smoothie dish: smoothie combos, secrets included")
 	rs.has_blender = false
 	rs.changed.emit()
 	check(combo_board.station == Dish.Station.BURGER, "no blender: back to burger combos")

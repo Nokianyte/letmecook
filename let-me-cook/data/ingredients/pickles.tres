@@ -12,3 +12,4 @@ category = 1
 price = 20
 base_chips = 2.0
 tags = Array[StringName]([&"veg", &"sour"])
+crossover = true

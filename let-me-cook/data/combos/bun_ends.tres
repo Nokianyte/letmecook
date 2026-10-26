@@ -6,7 +6,7 @@
 script = ExtResource("1_combo")
 id = &"bun_ends"
 display_name = "Bun ends"
-rule = "bun at bottom and top"
+rule = "bun at both ends"
 station = 0
 mult = 1.0
 starter = true

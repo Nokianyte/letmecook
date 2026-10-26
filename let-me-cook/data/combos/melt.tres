@@ -6,7 +6,7 @@
 script = ExtResource("1_combo")
 id = &"melt"
 display_name = "Melt"
-rule = "cheese touching patty"
+rule = "cheese next to patty"
 station = 0
 mult = 0.5
 starter = true

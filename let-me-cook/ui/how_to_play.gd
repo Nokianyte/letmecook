@@ -27,6 +27,9 @@ Bought at night, kept on a counter with 3 slots. They apply [b]left to right[/b]
 [b]Smoothies[/b] (after buying the blender)
 Drop ingredients in the jar. Aim for 30–60% liquid, pair flavors that go together, and avoid clashing colors that turn muddy. Smoothies have their own combos.
 
+[b]Crossovers[/b]
+Burger food can go in the jar, and fruit or spinach can go on a burger. Some odd pairings are [b]secret combos[/b]: try things!
+
 [color=#ffffff80]F1: debug panel (money, skip day, seed).[/color]"""
 
 var _root: Control

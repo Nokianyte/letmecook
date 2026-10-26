@@ -102,7 +102,11 @@ func _initialize() -> void:
 	rs.changed.emit()
 	await frames(2)
 	check(kitchen.get_node("%JarColumn").visible, "jar shown with a blender")
-	check(not jar._can_drop_data(Vector2.ZERO, {"unit": unit_of(&"patty")}), "burger ingredients don't go in the jar")
+	check(jar._can_drop_data(Vector2.ZERO, {"unit": unit_of(&"patty")}), "crossover: a patty can go in the jar")
+	check(not jar._can_drop_data(Vector2.ZERO, {"unit": unit_of(&"ketchup")}), "sauces don't go in the jar")
+	check(kitchen.get_node("%BurgerBoard")._can_drop_data(Vector2.ZERO, {"unit": unit_of(&"banana")}), "crossover: a banana can go on the burger")
+	check(not kitchen.get_node("%BurgerBoard")._can_drop_data(Vector2.ZERO, {"unit": unit_of(&"milk")}), "liquids stay in the jar")
+	check(Shop.pool(rs.data, Dish.Station.BURGER).all(func(i): return not i.smoothie_ok), "shops still sell by home station")
 
 	var board = kitchen.get_node("%BurgerBoard")
 	board.drop_unit(unit_of(&"stale_bread"), Vector2(board.size.x / 2, 50))

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Combo" format=3]
+
+[ext_resource type="Script" path="res://rules/combo.gd" id="1_combo"]
+
+[resource]
+script = ExtResource("1_combo")
+id = &"gazpacho"
+display_name = "Gazpacho"
+rule = "tomato + onion + water"
+station = 1
+mult = 1.5
+starter = false
+secret = true
+kind = 1
+pattern = Array[StringName]([&"tomato", &"onion", &"water"])
+anchor = 0
+either_order = false
+each = false
+solids_only = false

@@ -36,6 +36,8 @@ enum Anchor {
 @export var mult: float = 0.5
 ## Shown on the combo board before it's discovered.
 @export var starter: bool = false
+## Not counted on the board until discovered (crossover combos).
+@export var secret: bool = false
 
 @export_group("Match")
 @export var kind: Kind = Kind.SEQUENCE

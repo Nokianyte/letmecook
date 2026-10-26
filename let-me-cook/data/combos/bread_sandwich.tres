@@ -6,7 +6,7 @@
 script = ExtResource("1_combo")
 id = &"bread_sandwich"
 display_name = "Bread sandwich"
-rule = "only bread, ketchup, bread"
+rule = "bread, ketchup, bread"
 station = 0
 mult = 1.0
 starter = false

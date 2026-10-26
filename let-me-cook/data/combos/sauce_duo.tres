@@ -6,7 +6,7 @@
 script = ExtResource("1_combo")
 id = &"sauce_duo"
 display_name = "Sauce duo"
-rule = "ketchup touching mustard"
+rule = "ketchup + mustard"
 station = 0
 mult = 0.5
 starter = false

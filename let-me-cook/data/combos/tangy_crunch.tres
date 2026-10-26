@@ -6,7 +6,7 @@
 script = ExtResource("1_combo")
 id = &"tangy_crunch"
 display_name = "Tangy crunch"
-rule = "pickles touching onion"
+rule = "pickles next to onion"
 station = 0
 mult = 0.5
 starter = false

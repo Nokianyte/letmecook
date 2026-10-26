@@ -50,7 +50,7 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if is_full() or not (data is Dictionary and data.get("unit") is IngredientUnit):
 		return false
 	var unit: IngredientUnit = data.unit
-	return unit.ingredient.smoothie_ok and RunState.pantry.has(unit)
+	return unit.ingredient.fits_jar() and RunState.pantry.has(unit)
 
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:

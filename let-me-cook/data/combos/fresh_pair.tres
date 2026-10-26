@@ -6,7 +6,7 @@
 script = ExtResource("1_combo")
 id = &"fresh_pair"
 display_name = "Fresh pair"
-rule = "tomato touching lettuce"
+rule = "tomato next to lettuce"
 station = 0
 mult = 0.5
 starter = false
