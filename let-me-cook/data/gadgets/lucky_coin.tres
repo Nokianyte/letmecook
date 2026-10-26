@@ -7,4 +7,4 @@ script = ExtResource("1_gadget")
 id = &"lucky_coin"
 display_name = "Lucky Coin"
 description = "The first reroll each night is free"
-price = 3
+price = 30

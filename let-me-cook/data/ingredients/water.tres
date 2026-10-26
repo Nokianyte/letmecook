@@ -13,3 +13,4 @@ tags = Array[StringName]([&"smoothie"])
 burger_ok = false
 smoothie_ok = true
 smoothie_role = 1
+price = 10

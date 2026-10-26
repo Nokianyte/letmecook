@@ -20,7 +20,7 @@ func _ready() -> void:
 	var title := Label.new()
 	title.text = "Debug (F1)"
 	box.add_child(title)
-	box.add_child(_button("+$50", _add_money))
+	box.add_child(_button("+$5", _add_money))
 	box.add_child(_button("Give blender", _give_blender))
 	box.add_child(_button("Skip day", _skip_day))
 
@@ -46,7 +46,7 @@ func toggle() -> void:
 
 
 func _add_money() -> void:
-	RunState.money += 50
+	RunState.money += 500
 	RunState.changed.emit()
 
 

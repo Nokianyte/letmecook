@@ -107,9 +107,9 @@ func _return_unfinished_food() -> void:
 
 func _refresh() -> void:
 	_day_label.text = "Day %d/%d" % [RunState.day, RunState.balance.days_per_run]
-	_money_label.text = "$%d" % RunState.money
-	_rent_label.text = "Rent today: $%d" % RunState.rent_today()
-	_close_button.text = "Close for the day (pay $%d)" % RunState.rent_today()
+	_money_label.text = Money.text(RunState.money)
+	_rent_label.text = "Rent today: %s" % Money.text(RunState.rent_today())
+	_close_button.text = "Close for the day (pay %s)" % Money.text(RunState.rent_today())
 
 	var busy := _board.is_busy() or _board.is_pouring()
 	_clear_button.text = "Discard" if _board.ruined else "Clear"

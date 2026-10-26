@@ -36,11 +36,11 @@ The night shop SHALL offer a configured number of gadgets (default 2), drawn at 
 - **THEN** that offer slot shows a different gadget for sale
 
 ### Requirement: Selling gadgets
-During the night phase the player SHALL be able to sell an owned gadget for half its price, rounded down, freeing its slot.
+During the night phase the player SHALL be able to sell an owned gadget for half its price, rounded down to the cent, freeing its slot.
 
 #### Scenario: Sell to make room
-- **WHEN** the player sells a gadget bought for $8
-- **THEN** the player receives $4 and the slot is free
+- **WHEN** the player sells a gadget bought for $0.75
+- **THEN** the player receives $0.37 and the slot is free
 
 ### Requirement: Reordering the counter
 The player SHALL be able to reorder gadgets on the counter by dragging them, in the kitchen and at night. The order MUST be kept until the player changes it.
@@ -78,7 +78,7 @@ The prototype SHALL include at least these gadgets (prices are configured in dat
 | Tower Mold | +0.5 mult per solid layer beyond the fifth |
 | Pro Squeeze Bottle | Sauce layers give ×2 chips (adds their chips again) |
 | Fruit Basket | +1 mult per distinct fruit in a smoothie |
-| Tip Jar | +$2 for every dish served |
+| Tip Jar | +$0.20 for every dish served |
 | Lucky Coin | The first reroll each night is free |
 
 #### Scenario: Tower Mold rewards tall burgers
@@ -91,7 +91,7 @@ The prototype SHALL include at least these gadgets (prices are configured in dat
 
 #### Scenario: Tip Jar
 - **WHEN** the player serves a dish with Tip Jar on the counter
-- **THEN** money increases by the dish's payout plus $2
+- **THEN** money increases by the dish's payout plus $0.20
 
 #### Scenario: Lucky Coin
 - **WHEN** the player rerolls for the first time in a night with Lucky Coin on the counter

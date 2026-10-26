@@ -41,7 +41,7 @@ func _init(p_slot: int, p_gadget: Gadget, p_sellable: bool) -> void:
 	box.add_child(effect)
 	if sellable:
 		var sell := Button.new()
-		sell.text = "Sell $%d" % RunState.sell_price(gadget)
+		sell.text = "Sell %s" % Money.text(RunState.sell_price(gadget))
 		sell.pressed.connect(RunState.sell_gadget.bind(slot))
 		box.add_child(sell)
 

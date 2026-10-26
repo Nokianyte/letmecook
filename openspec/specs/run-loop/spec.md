@@ -27,8 +27,8 @@ A new run SHALL start with configured starting money, a starting pantry of strug
 Each served dish's score SHALL be converted into money at the configured rate as soon as it is served. The kitchen MUST show the day's running total score and the current money.
 
 #### Scenario: Money after a dish
-- **WHEN** the player serves a dish scoring 20 and the rate is $0.5 per point
-- **THEN** money increases by $10 and the day's total score increases by 20
+- **WHEN** the player serves a dish scoring 21 and the rate is 5 cents per point
+- **THEN** money increases by $1.05 and the day's total score increases by 21
 
 ### Requirement: Closing for the day
 The kitchen SHALL offer a "Close for the day" action available at any time during the kitchen phase. Closing MUST end the kitchen phase and settle rent. A dish still being built when closing MUST be cleared first (its solid ingredients return to the pantry).
@@ -61,3 +61,14 @@ Ingredients left in the pantry at the end of the kitchen phase SHALL remain owne
 #### Scenario: Leftovers kept
 - **WHEN** the player closes for the day with 3 patties still in the pantry
 - **THEN** those 3 patties are still owned during the night phase
+
+### Requirement: Money in dollars and cents
+All money in the game (prices, payouts, rent, tips, rerolls and sale prices) SHALL be whole numbers of cents. It MUST always be shown in dollars with two decimals, e.g. "$0.40" or "$12.05". Payouts that come out fractional MUST be rounded down to the cent.
+
+#### Scenario: Shown with cents
+- **WHEN** the player has 1,250 cents
+- **THEN** the kitchen shows "$12.50"
+
+#### Scenario: Small prices
+- **WHEN** a staple costs 10 cents
+- **THEN** its Buy button reads "Buy $0.10"

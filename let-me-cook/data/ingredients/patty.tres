@@ -8,6 +8,6 @@ id = &"patty"
 display_name = "Patty"
 color = Color(0.4, 0.22, 0.12, 1)
 size = Vector2(160, 28)
-price = 4
+price = 40
 base_chips = 8
 tags = Array[StringName]([&"patty", &"protein", &"meat"])

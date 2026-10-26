@@ -7,7 +7,8 @@ extends Resource
 @export var display_name: String
 ## Shown on the gadget's card and in tooltips.
 @export_multiline var description: String
-@export var price: int = 6
+## In cents.
+@export var price: int = 60
 
 
 ## Adds chips / mult / ×mult lines to a dish being scored. Runs in counter order,

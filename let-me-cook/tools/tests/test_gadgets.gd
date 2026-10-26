@@ -72,14 +72,14 @@ func _initialize() -> void:
 	rs.counter[0] = g(&"tip_jar")
 	var money0: int = rs.money
 	var res: ScoreResult = rs.serve(dish(bpb))
-	check(rs.money == money0 + rs.money_for(res.score) + 2 and res.money == rs.money_for(res.score) + 2, "Tip Jar: payout + $2")
+	check(rs.money == money0 + rs.money_for(res.score) + 20 and res.money == rs.money_for(res.score) + 20, "Tip Jar: payout + $0.20")
 	check(res.lines.back().kind == ScoreResult.Kind.MONEY and res.lines.back().source == &"tip_jar", "tip shows as a money line")
 	rs.counter[0] = g(&"lucky_coin")
 	rs.close_day()
-	rs.money = 50
+	rs.money = 500
 	check(rs.reroll_cost() == 0, "Lucky Coin: first reroll free")
 	rs.reroll_shop()
-	check(rs.money == 50 and rs.reroll_cost() == b.reroll_base_cost + b.reroll_cost_step, "...then the normal second-reroll price (%d)" % rs.reroll_cost())
+	check(rs.money == 500 and rs.reroll_cost() == b.reroll_base_cost + b.reroll_cost_step, "...then the normal second-reroll price (%d)" % rs.reroll_cost())
 
 	print("[shop]")
 	rs.new_run(401)
@@ -90,9 +90,9 @@ func _initialize() -> void:
 	check(rs.gadget_offers.size() == b.gadget_offer_slots, "%d gadget offers" % rs.gadget_offers.size())
 	check(not offered.has(g(&"tip_jar")) and not offered.has(g(&"lucky_coin")), "owned gadgets aren't offered")
 	check(offered[0] != offered[1], "offers are different gadgets")
-	rs.money = 100
+	rs.money = 1000
 	var first: GadgetOffer = rs.gadget_offers[0]
-	check(rs.buy_gadget(first) and rs.counter[2] == first.gadget and first.sold and rs.money == 100 - first.gadget.price, "buy into the leftmost free slot")
+	check(rs.buy_gadget(first) and rs.counter[2] == first.gadget and first.sold and rs.money == 1000 - first.gadget.price, "buy into the leftmost free slot")
 	check(not rs.buy_gadget(rs.gadget_offers[1]), "counter full: can't buy")
 	var sold_price: int = rs.sell_price(rs.counter[0])
 	var m: int = rs.money
@@ -139,7 +139,7 @@ func _initialize() -> void:
 	check(seen.has(&"sesame_seeds") and seen.has(&"cast_iron_griddle"), "tally plays gadget lines")
 	check(wiggled, "the gadget card wiggles during the tally")
 	check(tally.get_children().any(func(l): return l.text.begins_with("×1.20  Sesame Seeds")), "×mult line reads '×1.20  Sesame Seeds'")
-	rs.money = 100
+	rs.money = 1000
 	kitchen.get_node("%CloseButton").pressed.emit()
 	await frames(2)
 	var night = main.current_scene()

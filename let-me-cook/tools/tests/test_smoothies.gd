@@ -41,7 +41,7 @@ func _initialize() -> void:
 		rs.new_run(100 + s)
 		rs.close_day()
 		if not rs.shop_stock[0].ingredient.has_tag(&"meat") or rs.shop_stock[0].quantity != 1: all_meat = false
-		rs.money = 100
+		rs.money = 1000
 		rs.reroll_shop()
 		if not rs.shop_stock[0].ingredient.has_tag(&"meat") or rs.shop_stock[0].quantity != 1: all_meat = false
 	check(all_meat, "first slot is one unit of meat on 40 seeds, before and after a reroll")
@@ -52,7 +52,7 @@ func _initialize() -> void:
 	rs.new_run(300)
 	rs.close_day()
 	check(rs.smoothie_stock.is_empty(), "no smoothie bar without a blender")
-	rs.money = 100
+	rs.money = 1000
 	rs.buy_blender()
 	check(rs.smoothie_stock.size() == b.smoothie_stock_slots and rs.smoothie_stock.all(func(o): return o.ingredient.smoothie_ok), "buying the blender opens the smoothie bar (%d slots)" % rs.smoothie_stock.size())
 	check(rs.shop_stock.all(func(o): return not o.ingredient.smoothie_ok), "the market keeps burger ingredients")
@@ -142,11 +142,11 @@ func _initialize() -> void:
 	var overlay = main.debug_overlay
 	var money_before: int = rs.money
 	overlay._add_money()
-	check(rs.money == money_before + 50, "+$50")
+	check(rs.money == money_before + 500, "+$5")
 	board.clear()
 	overlay._skip_day()
 	await frames(2)
-	check(rs.phase == rs.Phase.NIGHT and rs.money == money_before + 50, "skip day pays the rent for you")
+	check(rs.phase == rs.Phase.NIGHT and rs.money == money_before + 500, "skip day pays the rent for you")
 	overlay._skip_day()
 	await frames(2)
 	check(rs.phase == rs.Phase.KITCHEN and rs.day == 2, "skip day at night opens the next day")

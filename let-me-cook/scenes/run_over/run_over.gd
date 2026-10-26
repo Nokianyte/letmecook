@@ -12,10 +12,10 @@ func _ready() -> void:
 	var day: int = RunState.last_day.get("day", RunState.day)
 	if RunState.run_won:
 		_result_label.text = "You made rent!"
-		_detail_label.text = "Survived all %d days with $%d left.\nTotal score: %d" % [
-			RunState.balance.days_per_run, RunState.money, RunState.total_score]
+		_detail_label.text = "Survived all %d days with %s left.\nTotal score: %d" % [
+			RunState.balance.days_per_run, Money.text(RunState.money), RunState.total_score]
 	else:
 		_result_label.text = "Evicted"
-		_detail_label.text = "Day %d: rent was $%d, you had $%d.\nTotal score: %d" % [
-			day, RunState.last_day.get("rent", 0), RunState.money, RunState.total_score]
+		_detail_label.text = "Day %d: rent was %s, you had %s.\nTotal score: %d" % [
+			day, Money.text(RunState.last_day.get("rent", 0)), Money.text(RunState.money), RunState.total_score]
 	_seed_label.text = "Seed %d" % RunState.run_seed

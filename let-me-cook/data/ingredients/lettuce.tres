@@ -8,6 +8,6 @@ id = &"lettuce"
 display_name = "Lettuce"
 color = Color(0.4, 0.8, 0.3, 1)
 size = Vector2(175, 12)
-price = 2
+price = 20
 base_chips = 3.0
 tags = Array[StringName]([&"veg", &"fresh"])

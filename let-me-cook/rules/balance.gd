@@ -4,10 +4,10 @@ extends Resource
 
 @export_group("Run")
 @export var days_per_run: int = 7
-## Rent due at the end of each day; index 0 is day 1. Extra days reuse the last value.
-@export var rent_curve: PackedInt32Array = PackedInt32Array([5, 10, 20, 32, 46, 62, 80])
-## Money earned per point of score.
-@export var score_to_money: float = 0.5
+## Rent due at the end of each day, in cents; index 0 is day 1. Extra days reuse the last value.
+@export var rent_curve: PackedInt32Array = PackedInt32Array([50, 100, 200, 330, 480, 650, 850])
+## Cents earned per point of score (rounded down per dish).
+@export var score_to_money: float = 5.0
 
 @export_group("Scoring")
 ## Mult never goes below this, however many penalties apply. Combo values live in data/combos.
@@ -36,7 +36,8 @@ extends Resource
 @export var pour_interval: float = 0.05
 
 @export_group("Starting state")
-@export var starting_money: int = 10
+## In cents, like every price and amount of money in the game.
+@export var starting_money: int = 100
 ## Ingredient id -> count of units in the pantry at the start of a run (all at 100% freshness).
 @export var starting_pantry: Dictionary = {}
 @export var starting_fridge_slots: int = 3
@@ -53,15 +54,15 @@ extends Resource
 @export var smoothie_stock_slots: int = 4
 ## The first market slot always offers one unit of an ingredient with this tag (empty: no guarantee).
 @export var guaranteed_slot_tag: StringName = &"meat"
-@export var reroll_base_cost: int = 1
-@export var reroll_cost_step: int = 1
+@export var reroll_base_cost: int = 10
+@export var reroll_cost_step: int = 10
 ## Ingredient ids always offered at their own (low) price, unaffected by rerolls.
 @export var staple_ids: Array[StringName] = []
 ## Staple id -> units for sale each night (restocked every night). Keeps the
 ## struggle-meal floor without making it an unlimited money loop.
 @export var staple_stock: Dictionary = {}
-@export var blender_price: int = 12
-@export var fridge_upgrade_price: int = 8
+@export var blender_price: int = 120
+@export var fridge_upgrade_price: int = 80
 @export var fridge_upgrade_slots: int = 2
 @export var fridge_max_slots: int = 9
 

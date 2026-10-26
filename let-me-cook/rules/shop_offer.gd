@@ -21,6 +21,6 @@ func _init(p_ingredient: Ingredient, p_quantity: int, p_freshness: float = 1.0, 
 
 
 ## Bundles are cheaper: `discount` off per extra unit, rounded to the nearest dollar.
-## E.g. 10%: 2 patties ($4) cost $7, 3 cost $10.
+## E.g. 10%: 2 patties at $0.40 cost $0.72, 3 cost $0.96 (prices in cents).
 static func bulk_price(unit_price: int, quantity: int, discount: float) -> int:
 	return roundi(unit_price * quantity * (1.0 - discount * (quantity - 1)))

@@ -11,3 +11,4 @@ size = Vector2(140, 10)
 category = 1
 base_chips = 2.0
 tags = Array[StringName]([&"veg"])
+price = 10

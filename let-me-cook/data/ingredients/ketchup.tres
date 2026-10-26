@@ -13,3 +13,4 @@ category = 0
 doses = 40
 base_chips = 0.1
 tags = Array[StringName]([&"sauce", &"sweet"])
+price = 10

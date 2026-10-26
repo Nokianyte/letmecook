@@ -18,7 +18,8 @@ enum SmoothieRole { NONE, LIQUID, THICK }
 
 @export_group("Economy")
 @export var category: Category = Category.PERISHABLE
-@export var price: int = 1
+## In cents.
+@export var price: int = 10
 ## Doses in one bottle (sauces only).
 @export var doses: int = 0
 

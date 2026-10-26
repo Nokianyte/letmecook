@@ -15,8 +15,12 @@ const SCORE_COLOR := Color(1.0, 0.85, 0.35)
 const X_MULT_COLOR := Color(1.0, 0.45, 0.85)
 const MONEY_COLOR := Color(0.55, 0.9, 0.5)
 const PENALTY_COLOR := Color(1.0, 0.3, 0.3)
-const POP_SCALE := 1.5
-const POP_TIME := 0.3
+## Each line fades in while shrinking from this scale to its normal size.
+const FADE_IN_SCALE := 1.8
+const FADE_IN_TIME := 0.25
+## The final score starts bigger still.
+const RESULT_SCALE := 2.4
+const RESULT_TIME := 0.35
 
 const PREVIEW_COLOR := Color(1, 1, 1, 0.55)
 
@@ -45,7 +49,7 @@ func show_preview(result: ScoreResult, money: int) -> void:
 	for line in group_lines(result.lines):
 		_add_line(line)
 	_add_label("%.1f chips × %.1f mult" % [result.chips, result.mult], Color(1, 1, 1, 0.7), 14)
-	_add_label("≈ %d pts   +$%d" % [result.score, money], SCORE_COLOR, 18)
+	_add_label("≈ %d pts   +%s" % [result.score, Money.text(money)], SCORE_COLOR, 18)
 	_follow()
 
 
@@ -69,7 +73,7 @@ func play(dish: Dish) -> void:
 				mult += line.value
 			ScoreResult.Kind.X_MULT:
 				mult *= line.value
-		_add_line(line)
+		_fade_in(_add_line(line), FADE_IN_SCALE, FADE_IN_TIME)
 		line_played.emit(line)
 		move_child(running, get_child_count() - 1)
 		running.text = "%.1f chips × %.1f mult" % [chips, maxf(mult, result.min_mult)]
@@ -77,21 +81,25 @@ func play(dish: Dish) -> void:
 
 	if not await _wait(RESULT_DELAY, generation):
 		return
-	var final := _add_label("= %d pts   +$%d" % [result.score, result.money], SCORE_COLOR, 20)
+	var final := _add_label("= %d pts   +%s" % [result.score, Money.text(result.money)], SCORE_COLOR, 20)
 	_follow()
 	_playing = false
 	finished.emit()
-	_pop(final)
+	_fade_in(final, RESULT_SCALE, RESULT_TIME)
 
 
-## Scales a label up and back down around its center.
-func _pop(label: Label) -> void:
+## Fades a new line in while it shrinks from `from_scale` down to its normal size,
+## anchored at its left edge so the text lands where it belongs.
+func _fade_in(label: Label, from_scale: float, time: float) -> void:
+	label.modulate.a = 0.0
 	await get_tree().process_frame  # let the container size it first
 	if not is_instance_valid(label):
 		return
-	label.pivot_offset = label.size * 0.5
-	label.scale = Vector2(POP_SCALE, POP_SCALE)
-	label.create_tween().tween_property(label, "scale", Vector2.ONE, POP_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	label.pivot_offset = Vector2(0, label.size.y * 0.5)
+	label.scale = Vector2(from_scale, from_scale)
+	var tween := label.create_tween().set_parallel().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "scale", Vector2.ONE, time)
+	tween.tween_property(label, "modulate:a", 1.0, time * 0.8)
 
 
 ## Consecutive lines with the same kind, label, value and source merged into one, with
@@ -125,7 +133,7 @@ static func line_text(line: Dictionary) -> String:
 		ScoreResult.Kind.X_MULT:
 			return "×%.2f  %s" % [line.value, label]
 		ScoreResult.Kind.MONEY:
-			return "+$%d  %s" % [line.value, label]
+			return "+%s  %s" % [Money.text(int(line.value)), label]
 	return label
 
 

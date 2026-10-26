@@ -35,14 +35,14 @@ func _refresh() -> void:
 		return
 	var day: int = RunState.last_day.get("day", RunState.day)
 	_title_label.text = "Night %d" % day
-	_money_label.text = "$%d" % RunState.money
-	_next_rent_label.text = "Tomorrow's rent: $%d" % RunState.balance.rent_for_day(RunState.day + 1)
+	_money_label.text = Money.text(RunState.money)
+	_next_rent_label.text = "Tomorrow's rent: %s" % Money.text(RunState.balance.rent_for_day(RunState.day + 1))
 	_open_button.text = "Open the kitchen (day %d)" % (RunState.day + 1)
-	_summary_label.text = "Day %d: %d pts, rent $%d paid. Anything outside the fridge loses freshness overnight." % [
-		day, RunState.last_day.get("score", 0), RunState.last_day.get("rent", 0)]
+	_summary_label.text = "Day %d: %d pts, rent %s paid. Anything outside the fridge loses freshness overnight." % [
+		day, RunState.last_day.get("score", 0), Money.text(RunState.last_day.get("rent", 0))]
 
 	var cost := RunState.reroll_cost()
-	_reroll_button.text = "Reroll $%d" % cost
+	_reroll_button.text = "Reroll %s" % Money.text(cost)
 	_reroll_button.disabled = RunState.money < cost
 
 	_clear(_stock)
@@ -68,11 +68,11 @@ func _refresh() -> void:
 	_clear(_tools)
 	if RunState.blender_on_sale():
 		_tools.add_child(_card("Blender", "Unlocks smoothies", Color(0.6, 0.75, 0.9),
-				"Buy $%d" % RunState.balance.blender_price, RunState.money >= RunState.balance.blender_price,
+				"Buy %s" % Money.text(RunState.balance.blender_price), RunState.money >= RunState.balance.blender_price,
 				RunState.buy_blender))
 	if RunState.fridge_upgrade_on_sale():
 		_tools.add_child(_card("Bigger fridge", "+%d slots (max %d)" % [RunState.balance.fridge_upgrade_slots, RunState.balance.fridge_max_slots],
-				Color(0.8, 0.85, 0.9), "Buy $%d" % RunState.balance.fridge_upgrade_price,
+				Color(0.8, 0.85, 0.9), "Buy %s" % Money.text(RunState.balance.fridge_upgrade_price),
 				RunState.money >= RunState.balance.fridge_upgrade_price, RunState.buy_fridge_upgrade))
 	if _tools.get_child_count() == 0:
 		_tools.add_child(_dim_label("Nothing left to buy"))
@@ -100,7 +100,7 @@ func _offer_card(offer: ShopOffer) -> Control:
 		detail = "bottle, %d doses · %s" % [ingredient.doses, detail]
 	if offer.sold:
 		return _card(name, detail, ingredient.color, "Sold", false, Callable())
-	return _card(name, detail, ingredient.color, "Buy $%d" % offer.price, RunState.money >= offer.price,
+	return _card(name, detail, ingredient.color, "Buy %s" % Money.text(offer.price), RunState.money >= offer.price,
 			RunState.buy_offer.bind(offer))
 
 
@@ -111,7 +111,7 @@ func _gadget_card(offer: GadgetOffer) -> Control:
 		return _card(gadget.display_name, gadget.description, color, "Sold", false, Callable())
 	if RunState.free_slot() < 0:
 		return _card(gadget.display_name, gadget.description, color, "Counter full", false, Callable())
-	return _card(gadget.display_name, gadget.description, color, "Buy $%d" % gadget.price,
+	return _card(gadget.display_name, gadget.description, color, "Buy %s" % Money.text(gadget.price),
 			RunState.money >= gadget.price, RunState.buy_gadget.bind(offer))
 
 
@@ -123,7 +123,7 @@ func _staple_card(ingredient: Ingredient) -> Control:
 	detail += " · %d left tonight" % left
 	if left <= 0:
 		return _card(ingredient.display_name, detail, ingredient.color, "Sold out", false, Callable())
-	return _card(ingredient.display_name, detail, ingredient.color, "Buy $%d" % ingredient.price,
+	return _card(ingredient.display_name, detail, ingredient.color, "Buy %s" % Money.text(ingredient.price),
 			RunState.money >= ingredient.price, RunState.buy_staple.bind(ingredient.id))
 
 
