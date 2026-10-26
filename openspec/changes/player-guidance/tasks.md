@@ -19,4 +19,4 @@
 ## 4. Verify and ship
 
 - [x] 4.1 Tests: preview equals served score, callout diffing, specials determinism/values/progress, tutorial step progression and recovery, settings persistence
-- [ ] 4.2 Render check of the kitchen with preview, callouts and specials, and of a tutorial step; export and deploy to GitHub Pages
+- [x] 4.2 Render check of the kitchen with preview, callouts and specials, and of a tutorial step; export and deploy to GitHub Pages
