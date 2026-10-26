@@ -17,6 +17,8 @@ const SHAKE_STEPS := 8
 const SHAKE_STEP_TIME := 0.04
 const BOTTLE_SIZE := Vector2(26, 54)
 const NOZZLE_SIZE := Vector2(8, 10)
+## Distance between a layer's edge and its chips callout.
+const CALLOUT_GAP := 12.0
 const STREAM_WIDTH := 3.0
 
 ## Stability of the locked stack, or of the stack plus the live layer while one is resting.
@@ -263,13 +265,75 @@ func take_dish() -> Dish:
 	_lock_live()
 	if ruined:
 		return null
-	var dish := Dish.new(Recipe.Station.BURGER)
+	var dish := _dish_from(_entries)
+	_reset()
+	return dish
+
+
+## The dish in progress as it would be served right now (the live layer counts once it
+## rests), without changing the board. Null when there's nothing to score: empty, ruined,
+## sauce only, or a layer still falling.
+func preview_dish() -> Dish:
+	if ruined or _collapsing or (_live != null and not _live.is_resting()):
+		return null
+	var entries := _preview_entries()
+	var dish := _dish_from(entries)
+	return dish if dish.layers.any(func(l: DishLayer) -> bool: return not l.ingredient.is_sauce()) else null
+
+
+## Screen positions just right of each of the preview's layers (vertically centered), in
+## the same order as its layers.
+func preview_positions() -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	for entry in _preview_entries():
+		var point: Vector2 = entry.position
+		if entry is BurgerLayer:
+			point.x += entry.unit.ingredient.size.x * 0.5 + CALLOUT_GAP
+		else:
+			point += Vector2(entry.width * 0.5 + CALLOUT_GAP, -entry.max_height() * 0.5)
+		positions.append(_stage.get_global_transform() * point)
+	return positions
+
+
+## Screen position just above the top of the dish in progress.
+func top_position() -> Vector2:
+	return _stage.get_global_transform() * Vector2(0, _stack_top() - 10)
+
+
+## Ids of the solid ingredients on the board (live one included), bottom to top.
+func solid_ids() -> Array[StringName]:
+	var ids: Array[StringName] = []
 	for entry in _entries:
+		if entry is BurgerLayer:
+			ids.append(entry.unit.ingredient.id)
+	if _live != null:
+		ids.append(_live.unit.ingredient.id)
+	return ids
+
+
+## Total doses of sauce on the board.
+func sauce_doses() -> int:
+	var doses := 0
+	for entry in _entries:
+		if entry is SauceSmear:
+			doses += entry.amount
+	return doses
+
+
+func _preview_entries() -> Array:
+	var entries := _entries.duplicate()
+	if _live != null:
+		entries.append(_live)
+	return entries
+
+
+func _dish_from(entries: Array) -> Dish:
+	var dish := Dish.new(Recipe.Station.BURGER)
+	for entry in entries:
 		if entry is BurgerLayer:
 			dish.layers.append(DishLayer.new(entry.unit.ingredient, entry.unit.freshness))
 		else:
 			dish.layers.append(DishLayer.new(entry.unit.ingredient, entry.unit.freshness, entry.amount))
-	_reset()
 	return dish
 
 
@@ -350,6 +414,7 @@ func _reset() -> void:
 	ruined = false
 	stability = 1.0
 	_plate.collision_layer = 1
+	_place_stage()  # catch up on any resize that happened while the board was busy
 	state_changed.emit()
 
 
@@ -385,6 +450,10 @@ func _stack_top() -> float:
 
 
 func _place_stage() -> void:
+	# Never move the stage under a burger: locked layers would move with it while the
+	# live layer (owned by the physics engine) stayed put, and they'd drift apart.
+	if not is_empty():
+		return
 	_stage.position = _stage_home()
 
 

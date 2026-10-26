@@ -30,6 +30,7 @@ func open_kitchen() -> void:
 	board = kitchen.get_node("%BurgerBoard")
 
 func _initialize() -> void:
+	OS.set_environment("LETMECOOK_SETTINGS", "user://test_edge_settings.cfg")
 	await process_frame
 	rs = root.get_node("RunState")
 	rs.new_run(500)
@@ -96,14 +97,38 @@ func _initialize() -> void:
 	await frames(2)
 	check(rs.count_of(&"bun") == buns, "skipping the day returns the board's bun to the pantry")
 
-	print("[how to play]")
-	check(main.how_to_play.is_open(), "how-to-play opened at start")
-	main.how_to_play.close_screen()
+	print("[layout change mid-build]")
 	main.debug_overlay._skip_day()  # night -> kitchen
 	await frames(2)
+	open_kitchen()
+	board.drop_unit(unit_of(&"bun"), center()); await physics(100)
+	board.drop_unit(unit_of(&"patty"), center()); await physics(100)
+	var live = board._live
+	var before: Vector2 = live.global_position
+	var stage_before: Vector2 = board._stage.position
+	board.size.y -= 42.0  # e.g. a panel above the board grows for a moment
+	await frames(2)
+	board.size.y += 42.0
+	await frames(2)
+	check(board._stage.position == stage_before, "the stage doesn't move under a burger")
+	board.drop_unit(unit_of(&"bun"), center())  # locks the patty
+	await physics(5)
+	check(live.global_position.distance_to(before) < 0.5, "locking doesn't teleport the layer (moved %.1f px)" % live.global_position.distance_to(before))
+	# Godot can re-apply a stale transform to a body frozen right after landing (seen in a
+	# real window only); a locked layer must undo any move that isn't the board's.
+	var locked_at: Vector2 = live.global_position
+	live.global_position += Vector2(0, -42)
+	await physics(2)  # transform-change notifications arrive later in the frame
+	check(live.global_position.distance_to(locked_at) < 0.01, "a locked layer snaps back if something moves it")
+	board.clear()
+	await physics(100)
+	board.clear()
+	await frames(2)
+
+	print("[help menu]")
 	main.current_scene().get_node("%HelpButton").pressed.emit()
-	check(main.how_to_play.is_open(), "the ? button reopens it")
-	main.how_to_play.close_screen()
+	check(main.tutorial._menu.visible, "the ? button opens the help menu")
+	main.tutorial._menu.visible = false
 
 	print("RESULT: ", "PASS" if fails == 0 else "FAIL (%d)" % fails)
 	quit(0 if fails == 0 else 1)

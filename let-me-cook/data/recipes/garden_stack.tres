@@ -9,3 +9,4 @@ station = 0
 match_mode = 2
 ingredients = Array[StringName]([&"lettuce", &"tomato", &"onion"])
 mult_bonus = 1.5
+example = Array[StringName]([&"bun", &"patty", &"lettuce", &"tomato", &"onion", &"bun"])

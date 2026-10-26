@@ -1,16 +1,15 @@
-[gd_resource type="Resource" script_class="Ingredient" format=3]
+[gd_resource type="Resource" script_class="Ingredient" format=3 uid="uid://w1ueburakyn6"]
 
-[ext_resource type="Script" path="res://rules/ingredient.gd" id="1_ingredient"]
+[ext_resource type="Script" uid="uid://b6y1vg61xwdl0" path="res://rules/ingredient.gd" id="1_ingredient"]
 
 [resource]
 script = ExtResource("1_ingredient")
 id = &"mustard"
-kind = 1
 display_name = "Mustard"
+kind = 1
 color = Color(0.95, 0.8, 0.1, 1)
 size = Vector2(130, 10)
 category = 1
 doses = 40
-price = 1
 base_chips = 0.1
 tags = Array[StringName]([&"sauce"])

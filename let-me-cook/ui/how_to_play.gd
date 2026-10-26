@@ -1,5 +1,5 @@
 extends CanvasLayer
-## How-to-play overlay. Opens when the game starts and from the kitchen's "?" button
+## Rules reference card: every rule on one page. Opened from the "?" menu
 ## (anything can open it with get_tree().call_group("how_to_play", "open")).
 
 const TEXT := """[font_size=28][b]Let me cook![/b][/font_size]
@@ -67,7 +67,7 @@ func _ready() -> void:
 	box.add_child(text)
 
 	var close := Button.new()
-	close.text = "Let me cook!"
+	close.text = "Close"
 	close.custom_minimum_size = Vector2(0, 44)
 	close.pressed.connect(close_screen)
 	box.add_child(close)

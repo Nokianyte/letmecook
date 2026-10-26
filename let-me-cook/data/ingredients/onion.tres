@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="Ingredient" format=3]
+[gd_resource type="Resource" script_class="Ingredient" format=3 uid="uid://bvrobc25n0m40"]
 
-[ext_resource type="Script" path="res://rules/ingredient.gd" id="1_ingredient"]
+[ext_resource type="Script" uid="uid://b6y1vg61xwdl0" path="res://rules/ingredient.gd" id="1_ingredient"]
 
 [resource]
 script = ExtResource("1_ingredient")
@@ -9,6 +9,5 @@ display_name = "Onion"
 color = Color(0.92, 0.88, 0.95, 1)
 size = Vector2(140, 10)
 category = 1
-price = 1
-base_chips = 2
+base_chips = 2.0
 tags = Array[StringName]([&"veg"])

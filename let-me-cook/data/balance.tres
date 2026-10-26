@@ -1,33 +1,17 @@
-[gd_resource type="Resource" script_class="Balance" format=3]
+[gd_resource type="Resource" script_class="Balance" format=3 uid="uid://jqktnqgjvrxp"]
 
-[ext_resource type="Script" path="res://rules/balance.gd" id="1_balance"]
+[ext_resource type="Script" uid="uid://byyyr25nbhq1" path="res://rules/balance.gd" id="1_balance"]
 
 [resource]
 script = ExtResource("1_balance")
-days_per_run = 7
 rent_curve = PackedInt32Array(5, 8, 13, 18, 23, 30, 39)
-score_to_money = 0.5
-starting_money = 10
 starting_pantry = {
-&"stale_bread": 4,
 &"ketchup": 1,
-&"patty": 2
+&"patty": 2,
+&"stale_bread": 4
 }
-starting_fridge_slots = 3
-shop_stock_slots = 5
-smoothie_stock_slots = 4
-reroll_base_cost = 1
-reroll_cost_step = 1
 staple_ids = Array[StringName]([&"stale_bread", &"ketchup"])
 staple_stock = {
-&"stale_bread": 4,
-&"ketchup": 1
+&"ketchup": 1,
+&"stale_bread": 4
 }
-blender_price = 12
-fridge_upgrade_price = 8
-fridge_upgrade_slots = 2
-fridge_max_slots = 9
-shelf_stable_decay_outside = 0.1
-shelf_stable_decay_inside = 0.0
-perishable_decay_outside = 0.3
-perishable_decay_inside = 0.05

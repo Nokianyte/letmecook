@@ -9,3 +9,4 @@ station = 0
 match_mode = 0
 ingredients = Array[StringName]([&"bun", &"patty", &"cheese", &"patty", &"cheese", &"bun"])
 mult_bonus = 3.0
+example = Array[StringName]([&"bun", &"patty", &"cheese", &"patty", &"cheese", &"bun"])

@@ -17,3 +17,6 @@ enum MatchMode {
 @export var match_mode: MatchMode = MatchMode.ORDERED_EXACT
 @export var ingredients: Array[StringName] = []
 @export var mult_bonus: float = 1.0
+## A concrete dish that makes this recipe, bottom to top (sauces get a few doses).
+## Used to show what the recipe is worth on the specials board.
+@export var example: Array[StringName] = []

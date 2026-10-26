@@ -51,6 +51,10 @@ extends Resource
 @export var starting_pantry: Dictionary = {}
 @export var starting_fridge_slots: int = 3
 
+@export_group("Guidance")
+## Recipes on the daily specials board.
+@export var specials_count: int = 3
+
 @export_group("Kitchen Gadgets")
 @export var counter_slots: int = 3
 @export var gadget_offer_slots: int = 2

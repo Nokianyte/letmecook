@@ -19,6 +19,9 @@ extends Control
 @onready var _empty_jar_button: Button = %EmptyJarButton
 @onready var _blend_button: Button = %BlendButton
 @onready var _counter_row: HBoxContainer = %CounterRow
+@onready var _specials: VBoxContainer = %SpecialsStrip
+
+var live_preview: Node = preload("res://scenes/kitchen/live_preview.gd").new()
 
 
 func _ready() -> void:
@@ -28,7 +31,7 @@ func _ready() -> void:
 	_clear_button.pressed.connect(_board.clear)
 	_serve_button.pressed.connect(_on_serve_pressed)
 	_close_button.pressed.connect(_on_close_pressed)
-	%HelpButton.pressed.connect(func() -> void: get_tree().call_group("how_to_play", "open"))
+	%HelpButton.pressed.connect(func() -> void: get_tree().call_group("tutorial", "open_help_menu"))
 	_jar.state_changed.connect(_refresh)
 	_empty_jar_button.pressed.connect(_jar.clear)
 	_blend_button.pressed.connect(_on_blend_pressed)
@@ -40,7 +43,19 @@ func _ready() -> void:
 	RunState.day_closed.connect(_return_unfinished_food)
 	_show_day_score()
 	_show_spoiled_notice()
+	_setup_live_preview()
 	_refresh()
+
+
+func _setup_live_preview() -> void:
+	# Callouts float above everything in the kitchen and never take the mouse.
+	var overlay := Control.new()
+	overlay.name = "Callouts"
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(overlay)
+	add_child(live_preview)
+	live_preview.setup(_board, _jar, _tally, overlay, _specials)
 
 
 func _show_spoiled_notice() -> void:

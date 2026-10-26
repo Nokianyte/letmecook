@@ -19,6 +19,8 @@ var _age := 0.0
 var _still_time := 0.0
 var _resting := false
 var _draw_scale := Vector2.ONE
+var _locked := false
+var _lock_transform := Transform2D()
 
 
 func _init(p_unit: IngredientUnit) -> void:
@@ -46,7 +48,22 @@ func is_resting() -> bool:
 
 
 func lock() -> void:
+	# Lock where the physics engine has the layer. The node's transform can be stale for a
+	# moment if the layout above the board shifted, and freezing would snap to it.
+	global_transform = PhysicsServer2D.body_get_state(get_rid(), PhysicsServer2D.BODY_STATE_TRANSFORM)
 	freeze = true
+	# Godot can re-apply a stale transform from the fall to a body frozen right after it
+	# lands (seen with a real render loop: the layer jumped ~40 px). A locked layer holds
+	# its place: any move that isn't ours is undone immediately.
+	_lock_transform = global_transform
+	_locked = true
+	set_notify_transform(true)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSFORM_CHANGED and _locked and not global_transform.is_equal_approx(_lock_transform):
+		global_transform = _lock_transform
+		PhysicsServer2D.body_set_state(get_rid(), PhysicsServer2D.BODY_STATE_TRANSFORM, _lock_transform)
 
 
 func contains_point(local_point: Vector2) -> bool:
@@ -75,6 +92,7 @@ func _physics_process(delta: float) -> void:
 
 ## Unfreezes the layer and throws it, for the collapse animation.
 func tumble(impulse: Vector2, spin: float) -> void:
+	_locked = false
 	lock_rotation = false
 	freeze = false
 	apply_central_impulse(impulse)

@@ -1,3 +1,5 @@
+> **Archive note (2026-10-26):** the itch.io upload steps (1.2, 3.6, 4.7) were superseded by GitHub Pages (itch.io is blocked in Russia). A playtest with other players happened after shipping; its feedback (no clear direction) became the `player-guidance` change. Still open on purpose: 8.4 (the author's full win/loss run), stretch 6.5, and the backlog gadgets in group 9 (also catalogued in design.md).
+
 ## 1. Day 1 — Setup and web export
 
 - [x] 1.1 Create Godot 4 project (GDScript, 2D), set window/viewport size and stretch mode for browser play

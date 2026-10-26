@@ -41,6 +41,9 @@ var rerolls_tonight: int = 0
 ## Staple id -> units still for sale tonight.
 var staples_left: Dictionary = {}
 
+## Today's specials board.
+var specials: Array[Recipe] = []
+
 ## Kitchen Gadgets in counter order; null is an empty slot.
 var counter: Array[Gadget] = []
 var gadget_offers: Array[GadgetOffer] = []
@@ -80,6 +83,7 @@ func new_run(p_seed: int = -1) -> void:
 	pantry.clear()
 	for id in balance.starting_pantry:
 		add_units(id, balance.starting_pantry[id])
+	specials = Specials.draw(data, run_seed, day, has_blender)
 	_set_phase(Phase.KITCHEN)
 
 
@@ -306,6 +310,7 @@ func end_night() -> void:
 	smoothie_stock.clear()
 	gadget_offers.clear()
 	day += 1
+	specials = Specials.draw(data, run_seed, day, has_blender)
 	_set_phase(Phase.KITCHEN)
 
 

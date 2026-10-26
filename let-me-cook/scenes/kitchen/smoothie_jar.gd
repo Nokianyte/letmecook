@@ -93,13 +93,26 @@ func clear() -> void:
 
 ## Blends the contents into a Dish and empties the jar. Null if the jar is empty.
 func take_dish() -> Dish:
+	var dish := preview_dish()
+	if dish != null:
+		_reset()
+	return dish
+
+
+## The smoothie as it would be served right now, without changing the jar. Null if empty.
+func preview_dish() -> Dish:
 	if contents.is_empty():
 		return null
 	var dish := Dish.new(Recipe.Station.SMOOTHIE)
 	for unit in contents:
 		dish.layers.append(DishLayer.new(unit.ingredient, unit.freshness))
-	_reset()
 	return dish
+
+
+## Screen position just above the liquid.
+func top_position() -> Vector2:
+	var level := JAR_SIZE.y * 0.9 * contents.size() / RunState.balance.jar_capacity
+	return get_global_transform() * (_stage.position - Vector2(0, level + 12))
 
 
 func _reset() -> void:

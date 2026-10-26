@@ -10,12 +10,15 @@ const PHASE_SCENES := {
 var _current: Node = null
 var debug_overlay: CanvasLayer = preload("res://ui/debug_overlay.gd").new()
 var how_to_play: CanvasLayer = preload("res://ui/how_to_play.gd").new()
+var tutorial: CanvasLayer = preload("res://ui/tutorial.gd").new()
 
 
 func _ready() -> void:
 	add_child(debug_overlay)
 	add_child(how_to_play)
-	how_to_play.open()
+	tutorial.main = self
+	add_child(tutorial)
+	tutorial.offer_if_first_time()
 	RunState.phase_changed.connect(_show_phase)
 	_show_phase()
 
