@@ -99,7 +99,8 @@ func _initialize() -> void:
 	check(rs.sell_gadget(0) and rs.counter[0] == null and rs.money == m + sold_price and sold_price == floori(g(&"tip_jar").price / 2.0), "sell for half, rounded down")
 	var unsold: GadgetOffer = rs.gadget_offers[1]
 	rs.reroll_shop()
-	check(rs.gadget_offers[0] == first and rs.gadget_offers[1] != unsold, "reroll keeps the sold offer, replaces the unsold one")
+	check(rs.gadget_offers.size() == b.gadget_offer_slots and not rs.gadget_offers.has(first) and not rs.gadget_offers.has(unsold), "a reroll replaces every gadget offer, the bought one included")
+	check(rs.gadget_offers.all(func(o): return not o.sold) and rs.gadget_offers[0].gadget != rs.gadget_offers[1].gadget, "fresh offers are for sale and different")
 	check(not rs.counter.has(rs.gadget_offers[1].gadget), "rerolled offer isn't owned")
 	check(rs.buy_gadget(rs.gadget_offers[1]) and rs.counter[0] != null, "a freed slot can be bought into")
 	rs.end_night()

@@ -57,8 +57,14 @@ func _initialize() -> void:
 		rs.reroll_shop()
 	check(costs == [b.reroll_base_cost, b.reroll_base_cost + b.reroll_cost_step, b.reroll_base_cost + 2 * b.reroll_cost_step], "reroll costs rise: %s" % [costs])
 	check(rs.money == 100 - costs.reduce(func(acc, c): return acc + c, 0), "rerolls are paid")
-	check(rs.shop_stock[0] == kept and kept.sold, "sold slots survive a reroll")
-	check(rs.shop_stock[1] != old1, "unsold slots are replaced")
+	check(rs.shop_stock[0] != kept and rs.shop_stock[1] != old1, "a reroll replaces every slot, sold ones included")
+	check(rs.shop_stock.all(func(o): return not o.sold), "after a reroll every slot is for sale")
+	for o in rs.shop_stock.duplicate():
+		rs.money = 100
+		rs.buy_offer(o)
+	rs.money = 100
+	rs.reroll_shop()
+	check(rs.shop_stock.all(func(o): return not o.sold) and rs.shop_stock[0].quantity == 1 and rs.shop_stock[0].ingredient.has_tag(&"meat"), "buying out the market then rerolling restocks it (meat still first)")
 
 	print("[staples]")
 	var bread: int = rs.count_of(&"stale_bread")

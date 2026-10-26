@@ -53,18 +53,16 @@ static func roll_smoothie_stock(rng: RandomNumberGenerator, data: GameData) -> A
 	return stock
 
 
-## Replaces every unsold market offer; sold slots stay sold.
+## Restocks every market slot, sold ones included (bought items stay with the player).
 static func reroll(stock: Array[ShopOffer], rng: RandomNumberGenerator, data: GameData) -> void:
 	for i in stock.size():
-		if not stock[i].sold:
-			stock[i] = _roll_market_slot(i, rng, data)
+		stock[i] = _roll_market_slot(i, rng, data)
 
 
 static func reroll_smoothie(stock: Array[ShopOffer], rng: RandomNumberGenerator, data: GameData) -> void:
 	var ingredients := pool(data, Recipe.Station.SMOOTHIE)
 	for i in stock.size():
-		if not stock[i].sold:
-			stock[i] = roll_offer(rng, ingredients, data.balance.bulk_discount_per_extra_unit)
+		stock[i] = roll_offer(rng, ingredients, data.balance.bulk_discount_per_extra_unit)
 
 
 ## Tonight's gadget offers: different gadgets the player doesn't own.
@@ -78,15 +76,11 @@ static func roll_gadget_offers(rng: RandomNumberGenerator, data: GameData, count
 	return offers
 
 
-## Replaces unsold gadget offers with other gadgets not owned or already on offer.
+## Replaces every gadget offer, sold ones included, with a fresh draw of unowned gadgets.
 static func reroll_gadget_offers(offers: Array[GadgetOffer], rng: RandomNumberGenerator, data: GameData, counter: Array[Gadget]) -> void:
-	for i in offers.size():
-		if offers[i].sold:
-			continue
-		var taken := offers.map(func(o: GadgetOffer) -> Gadget: return o.gadget)
-		var available := data.gadgets.filter(func(g: Gadget) -> bool: return not counter.has(g) and not taken.has(g))
-		if not available.is_empty():
-			offers[i] = GadgetOffer.new(available[rng.randi_range(0, available.size() - 1)])
+	var fresh := roll_gadget_offers(rng, data, counter)
+	offers.clear()
+	offers.append_array(fresh)
 
 
 static func reroll_cost(balance: Balance, rerolls_tonight: int) -> int:

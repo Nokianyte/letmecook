@@ -60,7 +60,7 @@ func _initialize() -> void:
 	rs.buy_offer(rs.smoothie_stock[1])
 	var bar1 = rs.smoothie_stock[1]
 	rs.reroll_shop()
-	check(rs.smoothie_stock[0] != bar0 and rs.smoothie_stock[1] == bar1, "reroll replaces unsold bar slots, keeps sold ones")
+	check(rs.smoothie_stock[0] != bar0 and rs.smoothie_stock[1] != bar1 and rs.smoothie_stock.all(func(o): return not o.sold), "a reroll restocks every bar slot, the bought one included")
 	rs.end_night()
 	rs.close_day()
 	check(rs.smoothie_stock.size() == b.smoothie_stock_slots, "the bar rolls every night once unlocked")
