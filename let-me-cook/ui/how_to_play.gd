@@ -13,7 +13,7 @@ You're broke. Build dishes from what you can afford, serve them, and make rent f
 
 [b]Scoring: chips × mult[/b]
 • [color=#8cc7ff]Chips[/color]: each ingredient's value × its freshness.
-• [color=#ff8c73]Mult[/color]: buns on both ends, cheese touching patty, recipes ([i]Struggle Burger, Classic Cheese, Double Cheese, Garden Stack…[/i]). Sauce right on the bottom bun makes it soggy.
+• [color=#ff8c73]Mult[/color]: combos, ways of stacking ingredients (bun at bottom and top, cheese touching patty, sauce on a patty…). Several combos add up. The combo board above the plate lists the ones you know; build new arrangements to discover more. Some combos are penalties, like sauce right on the bottom bun.
 • Every point pays money.
 
 [b]Kitchen Gadgets[/b]
@@ -25,7 +25,7 @@ Bought at night, kept on a counter with 3 slots. They apply [b]left to right[/b]
 • Anything outside the fridge loses freshness overnight; at 0% it spoils.
 
 [b]Smoothies[/b] (after buying the blender)
-Drop ingredients in the jar. Aim for 30–60% liquid, pair flavors that go together, and avoid clashing colors that turn muddy.
+Drop ingredients in the jar. Aim for 30–60% liquid, pair flavors that go together, and avoid clashing colors that turn muddy. Smoothies have their own combos.
 
 [color=#ffffff80]F1: debug panel (money, skip day, seed).[/color]"""
 

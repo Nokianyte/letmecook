@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Combo" format=3]
+
+[ext_resource type="Script" path="res://rules/combo.gd" id="1_combo"]
+
+[resource]
+script = ExtResource("1_combo")
+id = &"bun_ends"
+display_name = "Bun ends"
+rule = "bun at bottom and top"
+station = 0
+mult = 1.0
+starter = true
+kind = 0
+pattern = Array[StringName]([&"bun", &"bun"])
+anchor = 4
+either_order = false
+each = false
+solids_only = true

@@ -5,5 +5,5 @@ extends Resource
 
 @export var balance: Balance
 @export var ingredients: Array[Ingredient] = []
-@export var recipes: Array[Recipe] = []
+@export var combos: Array[Combo] = []
 @export var gadgets: Array[Gadget] = []

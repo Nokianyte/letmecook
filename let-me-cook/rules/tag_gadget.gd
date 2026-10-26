@@ -35,9 +35,9 @@ enum Effect { ADD_CHIPS, ADD_MULT, X_MULT }
 
 
 func modify_score(dish: Dish, result: ScoreResult) -> void:
-	if station == Station.BURGER and dish.station != Recipe.Station.BURGER:
+	if station == Station.BURGER and dish.station != Dish.Station.BURGER:
 		return
-	if station == Station.SMOOTHIE and dish.station != Recipe.Station.SMOOTHIE:
+	if station == Station.SMOOTHIE and dish.station != Dish.Station.SMOOTHIE:
 		return
 	if condition == Condition.BUN_ENDS and not Scoring.has_bun_ends(dish):
 		return

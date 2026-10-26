@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Combo" format=3]
+
+[ext_resource type="Script" path="res://rules/combo.gd" id="1_combo"]
+
+[resource]
+script = ExtResource("1_combo")
+id = &"lettuce_shield"
+display_name = "Lettuce shield"
+rule = "lettuce on the bottom bun"
+station = 0
+mult = 0.5
+starter = false
+kind = 0
+pattern = Array[StringName]([&"bun", &"lettuce"])
+anchor = 1
+either_order = false
+each = false
+solids_only = false

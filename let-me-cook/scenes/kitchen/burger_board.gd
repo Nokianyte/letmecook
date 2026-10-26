@@ -328,7 +328,7 @@ func _preview_entries() -> Array:
 
 
 func _dish_from(entries: Array) -> Dish:
-	var dish := Dish.new(Recipe.Station.BURGER)
+	var dish := Dish.new(Dish.Station.BURGER)
 	for entry in entries:
 		if entry is BurgerLayer:
 			dish.layers.append(DishLayer.new(entry.unit.ingredient, entry.unit.freshness))

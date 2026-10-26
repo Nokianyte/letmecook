@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_balance")
-rent_curve = PackedInt32Array(5, 8, 13, 18, 23, 30, 39)
+rent_curve = PackedInt32Array(5, 10, 20, 32, 46, 62, 80)
 starting_pantry = {
 &"ketchup": 1,
 &"patty": 2,

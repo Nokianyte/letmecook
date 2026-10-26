@@ -1,6 +1,7 @@
 class_name ScoreTally
 extends VBoxContainer
-## Plays a served dish's score breakdown back line by line, Balatro-style.
+## Plays a served dish's score breakdown back line by line, Balatro-style. Repeated lines
+## are grouped ("+2.0  Melt ×4"). Sits in a ScrollContainer and follows the newest line.
 
 signal finished
 ## Emitted as each breakdown line appears (the counter wiggles the gadget that made it).
@@ -41,10 +42,11 @@ func show_preview(result: ScoreResult, money: int) -> void:
 	clear()
 	_showing_preview = true
 	_add_label("If served now", PREVIEW_COLOR, 14)
-	for line in result.lines:
+	for line in group_lines(result.lines):
 		_add_line(line)
 	_add_label("%.1f chips × %.1f mult" % [result.chips, result.mult], Color(1, 1, 1, 0.7), 14)
 	_add_label("≈ %d pts   +$%d" % [result.score, money], SCORE_COLOR, 18)
+	_follow()
 
 
 func play(dish: Dish) -> void:
@@ -53,11 +55,11 @@ func play(dish: Dish) -> void:
 	var generation := _generation
 	var result := dish.result
 
-	_add_label(result.recipe_name if result.recipe_name != "" else dish.display_name(), Color.WHITE, 18)
+	_add_label(dish.display_name(), Color.WHITE, 18)
 	var chips := 0.0
 	var mult := 1.0
 	var running := _add_label("", Color(1, 1, 1, 0.7), 14)
-	for line in result.lines:
+	for line in group_lines(result.lines):
 		if not await _wait(LINE_DELAY, generation):
 			return
 		match line.kind:
@@ -71,10 +73,12 @@ func play(dish: Dish) -> void:
 		line_played.emit(line)
 		move_child(running, get_child_count() - 1)
 		running.text = "%.1f chips × %.1f mult" % [chips, maxf(mult, result.min_mult)]
+		_follow()
 
 	if not await _wait(RESULT_DELAY, generation):
 		return
 	var final := _add_label("= %d pts   +$%d" % [result.score, result.money], SCORE_COLOR, 20)
+	_follow()
 	_playing = false
 	finished.emit()
 	_pop(final)
@@ -90,18 +94,39 @@ func _pop(label: Label) -> void:
 	label.create_tween().tween_property(label, "scale", Vector2.ONE, POP_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
+## Consecutive lines with the same kind, label, value and source merged into one, with
+## "count" and the combined value (summed, or multiplied for ×mult).
+static func group_lines(lines: Array[Dictionary]) -> Array[Dictionary]:
+	var grouped: Array[Dictionary] = []
+	for line in lines:
+		if not grouped.is_empty():
+			var last: Dictionary = grouped.back()
+			if last.kind == line.kind and last.label == line.label and is_equal_approx(last.each, line.value) and last.source == line.source:
+				last.count += 1
+				last.value = pow(last.each, last.count) if line.kind == ScoreResult.Kind.X_MULT else last.each * last.count
+				continue
+		var group := line.duplicate()
+		group["count"] = 1
+		group["each"] = line.value
+		grouped.append(group)
+	return grouped
+
+
 ## Text and color for one breakdown line (shared by the tally, the preview and callouts).
 static func line_text(line: Dictionary) -> String:
+	var label: String = line.label
+	if line.get("count", 1) > 1:
+		label += " ×%d" % line.count
 	match line.kind:
 		ScoreResult.Kind.CHIPS:
-			return "+%.1f  %s" % [line.value, line.label]
+			return "+%.1f  %s" % [line.value, label]
 		ScoreResult.Kind.MULT:
-			return "%s%.1f  %s" % ["+" if line.value >= 0 else "−", absf(line.value), line.label]
+			return "%s%.1f  %s" % ["+" if line.value >= 0 else "−", absf(line.value), label]
 		ScoreResult.Kind.X_MULT:
-			return "×%.2f  %s" % [line.value, line.label]
+			return "×%.2f  %s" % [line.value, label]
 		ScoreResult.Kind.MONEY:
-			return "+$%d  %s" % [line.value, line.label]
-	return line.label
+			return "+$%d  %s" % [line.value, label]
+	return label
 
 
 static func line_color(line: Dictionary) -> Color:
@@ -119,6 +144,16 @@ static func line_color(line: Dictionary) -> Color:
 
 func _add_line(line: Dictionary) -> Label:
 	return _add_label(line_text(line), line_color(line))
+
+
+## Scrolls the surrounding ScrollContainer to the newest line once it's laid out.
+func _follow() -> void:
+	var scroll := get_parent() as ScrollContainer
+	if scroll == null:
+		return
+	await get_tree().process_frame
+	if is_instance_valid(scroll):
+		scroll.scroll_vertical = int(scroll.get_v_scroll_bar().max_value)
 
 
 func _wait(seconds: float, generation: int) -> bool:

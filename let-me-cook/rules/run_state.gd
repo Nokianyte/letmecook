@@ -6,6 +6,8 @@ signal changed
 signal phase_changed
 signal dish_served(dish: Dish)
 signal day_closed
+## A combo was built for the first time (ever, not just this run).
+signal combo_discovered(combo: Combo)
 
 enum Phase { KITCHEN, NIGHT, RUN_OVER }
 
@@ -41,8 +43,8 @@ var rerolls_tonight: int = 0
 ## Staple id -> units still for sale tonight.
 var staples_left: Dictionary = {}
 
-## Today's specials board.
-var specials: Array[Recipe] = []
+## Combo id -> true for every combo the player has built (kept across runs in Settings).
+var discovered: Dictionary = {}
 
 ## Kitchen Gadgets in counter order; null is an empty slot.
 var counter: Array[Gadget] = []
@@ -83,8 +85,39 @@ func new_run(p_seed: int = -1) -> void:
 	pantry.clear()
 	for id in balance.starting_pantry:
 		add_units(id, balance.starting_pantry[id])
-	specials = Specials.draw(data, run_seed, day, has_blender)
+	load_discoveries()
 	_set_phase(Phase.KITCHEN)
+
+
+func load_discoveries() -> void:
+	discovered.clear()
+	for id in Settings.get_value("combos", "discovered", []):
+		discovered[StringName(id)] = true
+
+
+## Starter combos count as known from the start.
+func is_discovered(combo: Combo) -> bool:
+	return combo.starter or discovered.has(combo.id)
+
+
+## Records a newly built combo and saves it. Returns false if it was already known.
+func discover(combo: Combo) -> bool:
+	if is_discovered(combo):
+		return false
+	discovered[combo.id] = true
+	var ids: Array[String] = []
+	for id in discovered:
+		ids.append(str(id))
+	Settings.set_value("combos", "discovered", ids)
+	combo_discovered.emit(combo)
+	return true
+
+
+func get_combo(id: StringName) -> Combo:
+	for combo in data.combos:
+		if combo.id == id:
+			return combo
+	return null
 
 
 func get_ingredient(id: StringName) -> Ingredient:
@@ -310,7 +343,6 @@ func end_night() -> void:
 	smoothie_stock.clear()
 	gadget_offers.clear()
 	day += 1
-	specials = Specials.draw(data, run_seed, day, has_blender)
 	_set_phase(Phase.KITCHEN)
 
 

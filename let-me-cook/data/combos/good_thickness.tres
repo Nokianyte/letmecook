@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Combo" format=3]
+
+[ext_resource type="Script" path="res://rules/combo.gd" id="1_combo"]
+
+[resource]
+script = ExtResource("1_combo")
+id = &"good_thickness"
+display_name = "Good thickness"
+rule = "30–60% liquid"
+station = 1
+mult = 1.0
+starter = true
+kind = 2
+pattern = Array[StringName]([])
+anchor = 0
+either_order = false
+each = false
+solids_only = false

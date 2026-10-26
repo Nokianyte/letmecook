@@ -1,7 +1,7 @@
 extends PanelContainer
 ## The serving window: the last dish's score tally, then today's served dishes, newest first.
 
-const SHOWN_DISHES := 4
+const SHOWN_DISHES := 2
 
 @onready var _title: Label = %WindowTitle
 @onready var _dishes: VBoxContainer = %Dishes

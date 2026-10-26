@@ -18,14 +18,14 @@ func counter_of(ids: Array) -> Array[Gadget]:
 	return c
 
 ## spec: ids or [id, amount], bottom to top.
-func dish(spec: Array, station := Recipe.Station.BURGER) -> Dish:
+func dish(spec: Array, station := Dish.Station.BURGER) -> Dish:
 	var d := Dish.new(station)
 	for s in spec:
 		var id: StringName = s if s is StringName else s[0]
 		d.layers.append(DishLayer.new(rs.get_ingredient(id), 1.0, 1 if s is StringName else s[1]))
 	return d
 
-func score(spec: Array, ids: Array, station := Recipe.Station.BURGER) -> ScoreResult:
+func score(spec: Array, ids: Array, station := Dish.Station.BURGER) -> ScoreResult:
 	return Scoring.score_dish(dish(spec, station), rs.data, counter_of(ids))
 
 func gadget_lines(r: ScoreResult) -> Array:
@@ -55,9 +55,9 @@ func _initialize() -> void:
 	check(gadget_lines(score(bpb, [&"tower_mold"])).is_empty(), "Tower Mold: nothing for short burgers")
 	r = score([&"bun", &"patty", [&"ketchup", 20], &"bun"], [&"pro_squeeze_bottle"])
 	check(gadget_lines(r).size() == 1 and is_equal_approx(gadget_lines(r)[0].value, 2.0), "Pro Squeeze Bottle: 2-chip sauce adds 2 chips (got %.1f)" % gadget_lines(r)[0].value)
-	r = score([&"strawberry", &"blueberry", &"banana", &"banana", &"milk"], [&"fruit_basket"], Recipe.Station.SMOOTHIE)
+	r = score([&"strawberry", &"blueberry", &"banana", &"banana", &"milk"], [&"fruit_basket"], Dish.Station.SMOOTHIE)
 	check(gadget_lines(r).size() == 1 and is_equal_approx(gadget_lines(r)[0].value, 3.0), "Fruit Basket: +1 per different fruit (3)")
-	check(gadget_lines(score([&"strawberry", &"milk"], [&"cast_iron_griddle", &"sesame_seeds"], Recipe.Station.SMOOTHIE)).is_empty(), "burger gadgets do nothing on smoothies")
+	check(gadget_lines(score([&"strawberry", &"milk"], [&"cast_iron_griddle", &"sesame_seeds"], Dish.Station.SMOOTHIE)).is_empty(), "burger gadgets do nothing on smoothies")
 
 	print("[counter order]")
 	var a := score(bpb, [&"cast_iron_griddle", &"sesame_seeds"])

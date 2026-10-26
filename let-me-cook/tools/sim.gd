@@ -1,7 +1,7 @@
 extends SceneTree
 # Economy simulator: plays full runs through the real rules with simple bots.
 # Usage: godot --headless --path . --script res://tools/sim.gd
-#   env SIM_RUNS=200, SIM_SET="rent=5,8,...;bread=4;struggle=1.0;smoothie_chips=1.0;<any Balance field>=value"
+#   env SIM_RUNS=200, SIM_SET="rent=5,8,...;bread=4;struggle=1.0;smoothie_chips=1.0;combo:melt=0.5;<any Balance field>=value"
 var rs
 const SAUCE_DOSES := 10
 const STRUGGLE_DOSES := 20
@@ -41,24 +41,36 @@ func candidates() -> Array:
 	var patties := units(&"patty")
 	var cheeses := units(&"cheese")
 	var sauce := bottle()
+	var lettuce := units(&"lettuce")
+	var crown := []  # veg under the top bun: tomato, then onion + pickles touching
+	for v in [&"tomato", &"onion", &"pickles"]:
+		var vu := units(v)
+		if vu.size() > 0: crown.append([vu[0], 1])
 	if patties.size() > 0:
-		# full stack
-		var stack := [[bottom, 1], [patties[0], 1]]
+		# combo stack: bun, lettuce (shield), cheese, patty (melt), sauce (sauced patty), veg (crown), bun
+		var stack := [[bottom, 1]]
+		if lettuce.size() > 0: stack.append([lettuce[0], 1])
 		if cheeses.size() > 0: stack.append([cheeses[0], 1])
+		stack.append([patties[0], 1])
 		if sauce: stack.append([sauce, mini(SAUCE_DOSES, sauce.doses_left)])
-		for v in [&"lettuce", &"tomato", &"onion", &"pickles"]:
-			var vu := units(v)
-			if vu.size() > 0: stack.append([vu[0], 1])
+		stack.append_array(crown)
 		stack.append([top, 1])
 		result.append(stack)
 		if cheeses.size() > 0:
 			result.append([[bottom, 1], [patties[0], 1], [cheeses[0], 1], [top, 1]])
-		if patties.size() > 1 and cheeses.size() > 1:
-			result.append([[bottom, 1], [patties[0], 1], [cheeses[0], 1], [patties[1], 1], [cheeses[1], 1], [top, 1]])
+		if patties.size() > 1 and cheeses.size() > 0:
+			# double decker: patty, cheese, patty (two melts), sauce on the top patty
+			var double := [[bottom, 1]]
+			if lettuce.size() > 0: double.append([lettuce[0], 1])
+			double.append_array([[patties[0], 1], [cheeses[0], 1], [patties[1], 1]])
+			if sauce: double.append([sauce, mini(SAUCE_DOSES, sauce.doses_left)])
+			double.append_array(crown)
+			double.append([top, 1])
+			result.append(double)
 	if sauce and sauce.ingredient.id == &"ketchup" and bottom.ingredient.id == &"stale_bread" and top.ingredient.id == &"stale_bread":
 		result.append([[bottom, 1], [sauce, mini(STRUGGLE_DOSES, sauce.doses_left)], [top, 1]])
 	if result.is_empty():
-		# bread + sauce + bread without the recipe
+		# bread + sauce + bread without a combo beyond the bun ends
 		var plain := [[bottom, 1]]
 		if sauce: plain.append([sauce, mini(SAUCE_DOSES, sauce.doses_left)])
 		plain.append([top, 1])
@@ -66,7 +78,7 @@ func candidates() -> Array:
 	return result
 
 func to_dish(cand: Array) -> Dish:
-	var d := Dish.new(Recipe.Station.BURGER)
+	var d := Dish.new(Dish.Station.BURGER)
 	for entry in cand:
 		d.layers.append(DishLayer.new(entry[0].ingredient, entry[0].freshness, entry[1]))
 	return d
@@ -117,7 +129,7 @@ func cook_day() -> void:
 		while true:
 			var picked := smoothie_candidate()
 			if picked.is_empty(): break
-			var d := Dish.new(Recipe.Station.SMOOTHIE)
+			var d := Dish.new(Dish.Station.SMOOTHIE)
 			for u in picked:
 				d.layers.append(DishLayer.new(u.ingredient, u.freshness))
 				rs.pantry.erase(u)
@@ -203,12 +215,16 @@ func _initialize() -> void:
 			"ketchup": rs.balance.staple_stock[&"ketchup"] = int(kv[1])
 			"start_bread": rs.balance.starting_pantry[&"stale_bread"] = int(kv[1])
 			"struggle":
-				for r in rs.data.recipes:
-					if r.display_name == "Struggle Burger": r.mult_bonus = float(kv[1])
+				rs.get_combo(&"bread_sandwich").mult = float(kv[1])
 			"smoothie_chips":
 				for i in rs.data.ingredients:
 					if i.smoothie_ok: i.base_chips *= float(kv[1])
-			_: rs.balance.set(kv[0], float(kv[1]) if "." in kv[1] else int(kv[1]))
+			_:
+				# combo:<id>=mult, or any Balance field
+				if kv[0].begins_with("combo:"):
+					rs.get_combo(StringName(kv[0].trim_prefix("combo:"))).mult = float(kv[1])
+				else:
+					rs.balance.set(kv[0], float(kv[1]) if "." in kv[1] else int(kv[1]))
 	print("rent ", rs.balance.rent_curve, "  money/pt ", rs.balance.score_to_money, "  staples ", rs.balance.staple_stock)
 	# SIM_GADGETS=1: win rate of the careless bot that buys each gadget on the first night it can afford it.
 	if OS.get_environment("SIM_GADGETS") != "":

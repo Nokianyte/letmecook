@@ -4,6 +4,8 @@ extends Control
 
 const PREVIEW_SIZE := Vector2(200, 110)
 const MINI_SCALE := 0.45
+## Height kept clear for the title at the top.
+const TITLE_SPACE := 26.0
 
 var dish: Dish
 
@@ -18,11 +20,11 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color(1, 1, 1, 0.15), false, 1.0)
 	var title := dish.display_name()
 	if dish.result != null:
-		title = "%s · %d" % [dish.result.recipe_name if dish.result.recipe_name != "" else title, dish.result.score]
+		title = "%s · %d" % [title, dish.result.score]
 	draw_string(ThemeDB.fallback_font, Vector2(8, 18), title,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color.WHITE)
 
-	if dish.station == Recipe.Station.SMOOTHIE:
+	if dish.station == Dish.Station.SMOOTHIE:
 		var ingredients: Array[Ingredient] = []
 		for layer in dish.layers:
 			ingredients.append(layer.ingredient)
@@ -31,8 +33,9 @@ func _draw() -> void:
 		draw_rect(cup, Color(1, 1, 1, 0.4), false, 1.0)
 		return
 
-	var y := size.y - 8
+	var minis: Array[Vector2] = []
 	var width := 0.0
+	var height := 0.0
 	for layer in dish.layers:
 		var mini: Vector2
 		if layer.ingredient.is_sauce():
@@ -41,5 +44,12 @@ func _draw() -> void:
 		else:
 			mini = layer.ingredient.size * MINI_SCALE
 			width = mini.x
+		minis.append(mini)
+		height += mini.y
+	# Tall burgers shrink to fit below the title.
+	var fit := minf(1.0, (size.y - TITLE_SPACE - 8) / maxf(height, 1.0))
+	var y := size.y - 8
+	for i in minis.size():
+		var mini := minis[i] * fit
 		y -= mini.y
-		draw_rect(Rect2(Vector2(size.x * 0.5 - mini.x * 0.5, y), mini), layer.ingredient.color)
+		draw_rect(Rect2(Vector2(size.x * 0.5 - mini.x * 0.5, y), mini), dish.layers[i].ingredient.color)

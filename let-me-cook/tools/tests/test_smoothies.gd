@@ -14,7 +14,7 @@ func ings(ids: Array) -> Array[Ingredient]:
 	return result
 
 func smoothie(ids: Array) -> ScoreResult:
-	var d := Dish.new(Recipe.Station.SMOOTHIE)
+	var d := Dish.new(Dish.Station.SMOOTHIE)
 	for id in ids:
 		d.layers.append(DishLayer.new(rs.get_ingredient(id), 1.0))
 	return Scoring.score_dish(d, rs.data)
@@ -47,8 +47,8 @@ func _initialize() -> void:
 	check(all_meat, "first slot is one unit of meat on 40 seeds, before and after a reroll")
 
 	print("[smoothie bar]")
-	check(not Shop.pool(rs.data, Recipe.Station.BURGER).any(func(i): return i.smoothie_ok), "market pool has no smoothie ingredients")
-	check(Shop.pool(rs.data, Recipe.Station.SMOOTHIE).all(func(i): return i.smoothie_ok), "smoothie pool is smoothie ingredients only")
+	check(not Shop.pool(rs.data, Dish.Station.BURGER).any(func(i): return i.smoothie_ok), "market pool has no smoothie ingredients")
+	check(Shop.pool(rs.data, Dish.Station.SMOOTHIE).all(func(i): return i.smoothie_ok), "smoothie pool is smoothie ingredients only")
 	rs.new_run(300)
 	rs.close_day()
 	check(rs.smoothie_stock.is_empty(), "no smoothie bar without a blender")
@@ -79,14 +79,15 @@ func _initialize() -> void:
 
 	print("[smoothie scoring]")
 	var r := smoothie([&"spinach", &"banana", &"milk"])
-	check(r.recipe_name == "Green Machine", "Green Machine matches")
 	var labels = mult_labels(r)
-	check(labels.has("Good thickness") and labels.filter(func(l): return l.begins_with("Pair:")).size() == 2, "ratio and two pair bonuses: %s" % [labels])
+	check(labels.has("Green Machine") and labels.has("Banana Shake"), "Green Machine and Banana Shake stack: %s" % [labels])
+	check(labels.has("Good thickness") and labels.filter(func(l): return l.begins_with("Flavor pair:")).size() == 2, "ratio and two pair bonuses: %s" % [labels])
 	check(is_equal_approx(r.chips, 12.0) and is_equal_approx(r.mult, 5.0) and r.score == 60, "Green Machine: 12 x 5 = 60 (got %.1f x %.1f = %d)" % [r.chips, r.mult, r.score])
 	r = smoothie([&"banana", &"blueberry", &"milk"])
 	check(mult_labels(r).has("Muddy color"), "muddy penalty applied")
-	check(smoothie([&"strawberry", &"blueberry", &"yogurt"]).recipe_name == "Berry Blast", "Berry Blast matches")
-	check(smoothie([&"banana", &"milk", &"milk"]).recipe_name == "Banana Shake", "Banana Shake matches (any amounts)")
+	check(mult_labels(smoothie([&"strawberry", &"blueberry", &"yogurt"])).has("Berry Blast"), "Berry Blast matches")
+	check(mult_labels(smoothie([&"banana", &"milk", &"milk"])).has("Banana Shake"), "Banana Shake matches (any amounts)")
+	check(not mult_labels(smoothie([&"banana", &"yogurt"])).has("Banana Shake"), "Banana Shake needs the milk")
 
 	print("[jar in the kitchen]")
 	rs.new_run(200)
@@ -124,7 +125,7 @@ func _initialize() -> void:
 	kitchen.get_node("%BlendButton").pressed.emit()
 	await frames(1)
 	var served = rs.served_today.back()
-	check(served.station == Recipe.Station.SMOOTHIE and served.result.recipe_name == "Green Machine", "blend & serve scores a Green Machine")
+	check(served.station == Dish.Station.SMOOTHIE and served.result.lines.any(func(l): return l.label == "Green Machine"), "blend & serve scores a Green Machine")
 	check(rs.money == money0 + served.result.money and jar.is_empty(), "paid, jar emptied")
 	jar.add_unit(unit_of(&"banana"), center)
 	jar.add_unit(unit_of(&"banana"), center)

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://4dyevhdcxhnj" path="res://rules/game_data.gd" id="1_game_data"]
 [ext_resource type="Script" uid="uid://b6y1vg61xwdl0" path="res://rules/ingredient.gd" id="2_ingredient"]
-[ext_resource type="Script" uid="uid://b4j53bwyma4gq" path="res://rules/recipe.gd" id="3_recipe"]
+[ext_resource type="Script" path="res://rules/combo.gd" id="3_combo"]
 [ext_resource type="Resource" uid="uid://jqktnqgjvrxp" path="res://data/balance.tres" id="4_balance"]
 [ext_resource type="Script" uid="uid://g7ljqxxrurcd" path="res://rules/gadget.gd" id="5_gadget"]
 [ext_resource type="Resource" path="res://data/gadgets/cast_iron_griddle.tres" id="gad_cast_iron_griddle"]
@@ -30,17 +30,28 @@
 [ext_resource type="Resource" uid="uid://d4jtacfi5uq4b" path="res://data/ingredients/tomato.tres" id="ing_tomato"]
 [ext_resource type="Resource" path="res://data/ingredients/water.tres" id="ing_water"]
 [ext_resource type="Resource" path="res://data/ingredients/yogurt.tres" id="ing_yogurt"]
-[ext_resource type="Resource" path="res://data/recipes/banana_shake.tres" id="rec_banana_shake"]
-[ext_resource type="Resource" path="res://data/recipes/berry_blast.tres" id="rec_berry_blast"]
-[ext_resource type="Resource" path="res://data/recipes/classic_cheese.tres" id="rec_classic_cheese"]
-[ext_resource type="Resource" path="res://data/recipes/double_cheese.tres" id="rec_double_cheese"]
-[ext_resource type="Resource" path="res://data/recipes/garden_stack.tres" id="rec_garden_stack"]
-[ext_resource type="Resource" path="res://data/recipes/green_machine.tres" id="rec_green_machine"]
-[ext_resource type="Resource" path="res://data/recipes/struggle_burger.tres" id="rec_struggle_burger"]
+
+[ext_resource type="Resource" path="res://data/combos/bun_ends.tres" id="combo_bun_ends"]
+[ext_resource type="Resource" path="res://data/combos/melt.tres" id="combo_melt"]
+[ext_resource type="Resource" path="res://data/combos/sauced_patty.tres" id="combo_sauced_patty"]
+[ext_resource type="Resource" path="res://data/combos/lettuce_shield.tres" id="combo_lettuce_shield"]
+[ext_resource type="Resource" path="res://data/combos/fresh_pair.tres" id="combo_fresh_pair"]
+[ext_resource type="Resource" path="res://data/combos/tangy_crunch.tres" id="combo_tangy_crunch"]
+[ext_resource type="Resource" path="res://data/combos/double_decker.tres" id="combo_double_decker"]
+[ext_resource type="Resource" path="res://data/combos/bread_sandwich.tres" id="combo_bread_sandwich"]
+[ext_resource type="Resource" path="res://data/combos/veg_crown.tres" id="combo_veg_crown"]
+[ext_resource type="Resource" path="res://data/combos/sauce_duo.tres" id="combo_sauce_duo"]
+[ext_resource type="Resource" path="res://data/combos/soggy_bottom.tres" id="combo_soggy_bottom"]
+[ext_resource type="Resource" path="res://data/combos/good_thickness.tres" id="combo_good_thickness"]
+[ext_resource type="Resource" path="res://data/combos/flavor_pair.tres" id="combo_flavor_pair"]
+[ext_resource type="Resource" path="res://data/combos/banana_shake.tres" id="combo_banana_shake"]
+[ext_resource type="Resource" path="res://data/combos/green_machine.tres" id="combo_green_machine"]
+[ext_resource type="Resource" path="res://data/combos/berry_blast.tres" id="combo_berry_blast"]
+[ext_resource type="Resource" path="res://data/combos/muddy_color.tres" id="combo_muddy_color"]
 
 [resource]
 script = ExtResource("1_game_data")
 balance = ExtResource("4_balance")
 ingredients = Array[ExtResource("2_ingredient")]([ExtResource("ing_stale_bread"), ExtResource("ing_ketchup"), ExtResource("ing_bun"), ExtResource("ing_patty"), ExtResource("ing_cheese"), ExtResource("ing_lettuce"), ExtResource("ing_tomato"), ExtResource("ing_onion"), ExtResource("ing_pickles"), ExtResource("ing_mustard"), ExtResource("ing_milk"), ExtResource("ing_water"), ExtResource("ing_banana"), ExtResource("ing_strawberry"), ExtResource("ing_blueberry"), ExtResource("ing_spinach"), ExtResource("ing_yogurt")])
-recipes = Array[ExtResource("3_recipe")]([ExtResource("rec_struggle_burger"), ExtResource("rec_classic_cheese"), ExtResource("rec_double_cheese"), ExtResource("rec_garden_stack"), ExtResource("rec_green_machine"), ExtResource("rec_berry_blast"), ExtResource("rec_banana_shake")])
+combos = Array[ExtResource("3_combo")]([ExtResource("combo_bun_ends"), ExtResource("combo_melt"), ExtResource("combo_sauced_patty"), ExtResource("combo_lettuce_shield"), ExtResource("combo_fresh_pair"), ExtResource("combo_tangy_crunch"), ExtResource("combo_double_decker"), ExtResource("combo_bread_sandwich"), ExtResource("combo_veg_crown"), ExtResource("combo_sauce_duo"), ExtResource("combo_soggy_bottom"), ExtResource("combo_good_thickness"), ExtResource("combo_flavor_pair"), ExtResource("combo_banana_shake"), ExtResource("combo_green_machine"), ExtResource("combo_berry_blast"), ExtResource("combo_muddy_color")])
 gadgets = Array[ExtResource("5_gadget")]([ExtResource("gad_cast_iron_griddle"), ExtResource("gad_cheese_grater"), ExtResource("gad_sesame_seeds"), ExtResource("gad_tower_mold"), ExtResource("gad_pro_squeeze_bottle"), ExtResource("gad_fruit_basket"), ExtResource("gad_tip_jar"), ExtResource("gad_lucky_coin")])

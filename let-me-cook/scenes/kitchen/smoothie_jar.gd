@@ -103,7 +103,7 @@ func take_dish() -> Dish:
 func preview_dish() -> Dish:
 	if contents.is_empty():
 		return null
-	var dish := Dish.new(Recipe.Station.SMOOTHIE)
+	var dish := Dish.new(Dish.Station.SMOOTHIE)
 	for unit in contents:
 		dish.layers.append(DishLayer.new(unit.ingredient, unit.freshness))
 	return dish

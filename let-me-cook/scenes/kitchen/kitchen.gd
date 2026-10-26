@@ -19,7 +19,7 @@ extends Control
 @onready var _empty_jar_button: Button = %EmptyJarButton
 @onready var _blend_button: Button = %BlendButton
 @onready var _counter_row: HBoxContainer = %CounterRow
-@onready var _specials: VBoxContainer = %SpecialsStrip
+@onready var _combo_board: Control = %ComboBoard
 
 var live_preview: Node = preload("res://scenes/kitchen/live_preview.gd").new()
 
@@ -55,7 +55,7 @@ func _setup_live_preview() -> void:
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(overlay)
 	add_child(live_preview)
-	live_preview.setup(_board, _jar, _tally, overlay, _specials)
+	live_preview.setup(_board, _jar, _tally, overlay, _combo_board)
 
 
 func _show_spoiled_notice() -> void:

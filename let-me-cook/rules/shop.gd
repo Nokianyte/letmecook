@@ -7,12 +7,12 @@ const MAX_SOLID_QUANTITY := 3
 
 
 ## Ingredients a section can roll. Staples are never rolled: they are always on sale.
-static func pool(data: GameData, station: Recipe.Station) -> Array[Ingredient]:
+static func pool(data: GameData, station: Dish.Station) -> Array[Ingredient]:
 	var result: Array[Ingredient] = []
 	for ingredient in data.ingredients:
 		if data.balance.staple_ids.has(ingredient.id):
 			continue
-		var fits := ingredient.burger_ok if station == Recipe.Station.BURGER else ingredient.smoothie_ok
+		var fits := ingredient.burger_ok if station == Dish.Station.BURGER else ingredient.smoothie_ok
 		if fits:
 			result.append(ingredient)
 	return result
@@ -46,7 +46,7 @@ static func roll_stock(rng: RandomNumberGenerator, data: GameData) -> Array[Shop
 
 
 static func roll_smoothie_stock(rng: RandomNumberGenerator, data: GameData) -> Array[ShopOffer]:
-	var ingredients := pool(data, Recipe.Station.SMOOTHIE)
+	var ingredients := pool(data, Dish.Station.SMOOTHIE)
 	var stock: Array[ShopOffer] = []
 	for i in data.balance.smoothie_stock_slots:
 		stock.append(roll_offer(rng, ingredients, data.balance.bulk_discount_per_extra_unit))
@@ -60,7 +60,7 @@ static func reroll(stock: Array[ShopOffer], rng: RandomNumberGenerator, data: Ga
 
 
 static func reroll_smoothie(stock: Array[ShopOffer], rng: RandomNumberGenerator, data: GameData) -> void:
-	var ingredients := pool(data, Recipe.Station.SMOOTHIE)
+	var ingredients := pool(data, Dish.Station.SMOOTHIE)
 	for i in stock.size():
 		stock[i] = roll_offer(rng, ingredients, data.balance.bulk_discount_per_extra_unit)
 
@@ -88,7 +88,7 @@ static func reroll_cost(balance: Balance, rerolls_tonight: int) -> int:
 
 
 static func _roll_market_slot(slot: int, rng: RandomNumberGenerator, data: GameData) -> ShopOffer:
-	var ingredients := pool(data, Recipe.Station.BURGER)
+	var ingredients := pool(data, Dish.Station.BURGER)
 	if slot == 0:
 		return roll_offer(rng, guaranteed_pool(ingredients, data.balance.guaranteed_slot_tag), data.balance.bulk_discount_per_extra_unit, 1)
 	return roll_offer(rng, ingredients, data.balance.bulk_discount_per_extra_unit)

@@ -4,7 +4,6 @@ extends CanvasLayer
 ## game state, re-evaluated each frame, so it can't miss an event or get stuck across
 ## scene changes. Also owns the first-launch offer and the "?" menu.
 
-const DEFAULT_SETTINGS_PATH := "user://settings.cfg"
 const BUBBLE_WIDTH := 330.0
 const MARGIN := 14.0
 const HIGHLIGHT_COLOR := Color(1.0, 0.85, 0.35)
@@ -15,7 +14,6 @@ const BURGER_STEPS := 4
 var main: Node
 ## Index of the current step, or -1 when the tutorial isn't running.
 var step := -1
-var settings_path := DEFAULT_SETTINGS_PATH
 
 var _steps: Array[Dictionary] = []
 var _highlight: Control
@@ -30,9 +28,6 @@ var _menu: Control
 func _ready() -> void:
 	layer = 40
 	add_to_group("tutorial")
-	var override := OS.get_environment("LETMECOOK_SETTINGS")
-	if override != "":
-		settings_path = override
 	_steps = _make_steps()
 	_build_ui()
 
@@ -65,15 +60,11 @@ func open_help_menu() -> void:
 
 
 func is_done() -> bool:
-	var config := ConfigFile.new()
-	return config.load(settings_path) == OK and config.get_value("tutorial", "done", false)
+	return Settings.get_value("tutorial", "done", false)
 
 
 func mark_done() -> void:
-	var config := ConfigFile.new()
-	config.load(settings_path)
-	config.set_value("tutorial", "done", true)
-	config.save(settings_path)
+	Settings.set_value("tutorial", "done", true)
 
 
 func _stop() -> void:
@@ -161,10 +152,10 @@ func _make_steps() -> Array[Dictionary]:
 		{"text": "Watch the list on the right: it shows what this burger scores if you serve it now. Serve it!",
 			"target": func() -> Rect2: return _rect(_kitchen_node("%ServeButton")),
 			"done": func() -> bool: return not RunState.served_today.is_empty() or RunState.phase != RunState.Phase.KITCHEN},
-		{"text": "Score = chips × mult. Chips come from each ingredient (fresher is worth more). Mult comes from combos, recipes and gadgets. Every point pays money.",
+		{"text": "Score = chips × mult. Chips come from each ingredient (fresher is worth more). Mult comes from combos and gadgets. Every point pays money.",
 			"target": func() -> Rect2: return _rect(_kitchen_node("%Window"))},
-		{"text": "Today's specials are recipes worth aiming for. Their value already counts your gadgets, and they light up as your burger matches them.",
-			"target": func() -> Rect2: return _rect(_kitchen_node("%SpecialsStrip"))},
+		{"text": "These are combos: ways to stack ingredients that add mult. They light up when your burger has them. There are more to discover, so try different orders!",
+			"target": func() -> Rect2: return _rect(_kitchen_node("%ComboBoard"))},
 		{"text": "Cook more if you can. When you're done, close for the day to pay rent.",
 			"target": func() -> Rect2: return _rect(_kitchen_node("%CloseButton")),
 			"done": func() -> bool: return RunState.phase != RunState.Phase.KITCHEN},

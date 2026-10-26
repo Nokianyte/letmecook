@@ -1,7 +1,7 @@
 class_name Scoring
 ## Balatro-style dish scoring: score = chips × mult.
-## Chips come from ingredient quality (base × freshness × amount); mult from how
-## cleverly they were combined (structure, adjacency, named recipes).
+## Chips come from ingredient quality (base × freshness × amount); mult from combos,
+## the arrangements listed in data/combos (structure, adjacency, sets).
 
 
 ## `counter` is the run's gadgets in counter order (empty slots are null).
@@ -12,15 +12,9 @@ static func score_dish(dish: Dish, data: GameData, counter: Array[Gadget] = []) 
 	for layer in dish.layers:
 		result.add_chips(_chips_label(layer), layer.chips())
 
-	if dish.station == Recipe.Station.BURGER:
-		_burger_rules(dish, balance, result)
-	else:
-		_smoothie_rules(dish, balance, result)
-
-	var recipe := best_recipe(dish, data)
-	if recipe != null:
-		result.recipe_name = recipe.display_name
-		result.add_mult(recipe.display_name, recipe.mult_bonus)
+	for combo in data.combos:
+		if combo.station == dish.station:
+			_apply_combo(combo, dish, balance, result)
 
 	for gadget in counter:
 		if gadget != null:
@@ -32,64 +26,104 @@ static func score_dish(dish: Dish, data: GameData, counter: Array[Gadget] = []) 
 	return result
 
 
-## The matching recipe with the biggest bonus, or null. Only one recipe counts per dish.
-static func best_recipe(dish: Dish, data: GameData) -> Recipe:
-	var best: Recipe = null
-	for recipe in data.recipes:
-		if matches(recipe, dish, data) and (best == null or recipe.mult_bonus > best.mult_bonus):
-			best = recipe
-	return best
+## Combo id -> how many of its lines `result` has.
+static func combo_counts(result: ScoreResult) -> Dictionary:
+	var counts := {}
+	if result == null:
+		return counts
+	for line in result.lines:
+		var id: StringName = line.get("combo", &"")
+		if id != &"":
+			counts[id] = counts.get(id, 0) + 1
+	return counts
 
 
-static func matches(recipe: Recipe, dish: Dish, data: GameData) -> bool:
-	if recipe.station != dish.station:
-		return false
-	var lists_sauce := false
-	for ingredient in data.ingredients:
-		if ingredient.is_sauce() and recipe.ingredients.has(ingredient.id):
-			lists_sauce = true
-	# Sauce layers are ignored unless the recipe asks for a sauce.
-	var ids: Array[StringName] = []
+## Money a dish with this score would pay, tips included.
+static func expected_money(score: int, dish: Dish, balance: Balance, counter: Array[Gadget]) -> int:
+	var money := floori(score * balance.score_to_money)
+	for gadget in counter:
+		if gadget != null:
+			money += gadget.on_dish_served(dish)
+	return money
+
+
+static func _apply_combo(combo: Combo, dish: Dish, balance: Balance, result: ScoreResult) -> void:
+	var ingredients: Array[Ingredient] = []
 	for layer in dish.layers:
-		if lists_sauce or not layer.ingredient.is_sauce():
-			ids.append(layer.ingredient.id)
-
-	match recipe.match_mode:
-		Recipe.MatchMode.ORDERED_EXACT:
-			return ids == recipe.ingredients
-		Recipe.MatchMode.ONLY_THESE:
-			for id in ids:
-				if not recipe.ingredients.has(id):
-					return false
-			for id in recipe.ingredients:
-				if not ids.has(id):
-					return false
-			return true
-		Recipe.MatchMode.CONTAINS:
-			for id in recipe.ingredients:
-				if not ids.has(id):
-					return false
-			return true
-	return false
+		ingredients.append(layer.ingredient)
+	match combo.kind:
+		Combo.Kind.SEQUENCE:
+			for i in sequence_count(combo, ingredients):
+				result.add_mult(combo.display_name, combo.mult, &"", combo.id)
+		Combo.Kind.SET:
+			if _has_set(combo, ingredients):
+				result.add_mult(combo.display_name, combo.mult, &"", combo.id)
+		Combo.Kind.THICKNESS:
+			var ratio := Smoothie.liquid_ratio(ingredients)
+			if ratio >= balance.ratio_min and ratio <= balance.ratio_max:
+				result.add_mult(combo.display_name, combo.mult, &"", combo.id)
+		Combo.Kind.FLAVOR_PAIR:
+			for pair in Smoothie.flavor_pairs(ingredients):
+				result.add_mult("%s: %s" % [combo.display_name, pair], combo.mult, &"", combo.id)
+		Combo.Kind.MUDDY:
+			if Smoothie.is_muddy(ingredients, balance):
+				result.add_mult(combo.display_name, combo.mult, &"", combo.id)
 
 
-static func _burger_rules(dish: Dish, balance: Balance, result: ScoreResult) -> void:
-	var layers := dish.layers
-	if layers.is_empty():
-		return
-	if has_bun_ends(dish):
-		result.add_mult("Bun on both ends", balance.structure_bonus)
+## How many times a SEQUENCE combo occurs in these layers (bottom to top); at most 1
+## unless the combo counts each occurrence.
+static func sequence_count(combo: Combo, layers: Array[Ingredient]) -> int:
+	if combo.solids_only:
+		var solids: Array[Ingredient] = []
+		for ingredient in layers:
+			if not ingredient.is_sauce():
+				solids.append(ingredient)
+		layers = solids
+	var pattern := combo.pattern
+	var n := layers.size()
+	var length := pattern.size()
+	if length == 0 or n < length:
+		return 0
+	var count := 0
+	match combo.anchor:
+		Combo.Anchor.ANYWHERE:
+			for i in n - length + 1:
+				if _matches_at(combo, layers, i):
+					count += 1
+		Combo.Anchor.BOTTOM:
+			count = 1 if _matches_at(combo, layers, 0) else 0
+		Combo.Anchor.TOP:
+			count = 1 if _matches_at(combo, layers, n - length) else 0
+		Combo.Anchor.WHOLE:
+			count = 1 if n == length and _matches_at(combo, layers, 0) else 0
+		Combo.Anchor.ENDS:
+			var forward := Combo.entry_matches(pattern.front(), layers.front()) and Combo.entry_matches(pattern.back(), layers.back())
+			var backward := combo.either_order and Combo.entry_matches(pattern.back(), layers.front()) and Combo.entry_matches(pattern.front(), layers.back())
+			count = 1 if n >= 2 and (forward or backward) else 0
+	return count if combo.each else mini(count, 1)
 
-	for i in melt_count(dish):
-		result.add_mult("Melt: cheese on patty", balance.melt_bonus)
 
-	if layers.size() >= 2 and layers[0].ingredient.has_tag(&"bun") and layers[1].ingredient.is_sauce():
-		result.add_mult("Soggy bottom", -balance.soggy_penalty)
+static func _matches_at(combo: Combo, layers: Array[Ingredient], start: int) -> bool:
+	var length := combo.pattern.size()
+	var forward := true
+	var backward := combo.either_order
+	for j in length:
+		var layer := layers[start + j]
+		forward = forward and Combo.entry_matches(combo.pattern[j], layer)
+		backward = backward and Combo.entry_matches(combo.pattern[length - 1 - j], layer)
+	return forward or backward
+
+
+static func _has_set(combo: Combo, ingredients: Array[Ingredient]) -> bool:
+	for entry in combo.pattern:
+		if not ingredients.any(func(i: Ingredient) -> bool: return Combo.entry_matches(entry, i)):
+			return false
+	return true
 
 
 ## A burger with a bun-tagged solid at the bottom and at the top.
 static func has_bun_ends(dish: Dish) -> bool:
-	if dish.station != Recipe.Station.BURGER:
+	if dish.station != Dish.Station.BURGER:
 		return false
 	var solids := dish.layers.filter(func(l: DishLayer) -> bool: return not l.ingredient.is_sauce())
 	return solids.size() >= 2 and solids.front().ingredient.has_tag(&"bun") and solids.back().ingredient.has_tag(&"bun")
@@ -104,19 +138,6 @@ static func melt_count(dish: Dish) -> int:
 		if (below.has_tag(&"cheese") and above.has_tag(&"patty")) or (below.has_tag(&"patty") and above.has_tag(&"cheese")):
 			n += 1
 	return n
-
-
-static func _smoothie_rules(dish: Dish, balance: Balance, result: ScoreResult) -> void:
-	var ingredients: Array[Ingredient] = []
-	for layer in dish.layers:
-		ingredients.append(layer.ingredient)
-	var ratio := Smoothie.liquid_ratio(ingredients)
-	if ratio >= balance.ratio_min and ratio <= balance.ratio_max:
-		result.add_mult("Good thickness", balance.ratio_bonus)
-	for pair in Smoothie.flavor_pairs(ingredients):
-		result.add_mult("Pair: %s" % pair, balance.flavor_pair_bonus)
-	if Smoothie.is_muddy(ingredients, balance):
-		result.add_mult("Muddy color", -balance.muddy_penalty)
 
 
 static func _chips_label(layer: DishLayer) -> String:

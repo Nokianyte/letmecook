@@ -5,19 +5,13 @@ extends Resource
 @export_group("Run")
 @export var days_per_run: int = 7
 ## Rent due at the end of each day; index 0 is day 1. Extra days reuse the last value.
-@export var rent_curve: PackedInt32Array = PackedInt32Array([5, 8, 13, 18, 23, 30, 39])
+@export var rent_curve: PackedInt32Array = PackedInt32Array([5, 10, 20, 32, 46, 62, 80])
 ## Money earned per point of score.
 @export var score_to_money: float = 0.5
 
 @export_group("Scoring")
-## Mult never goes below this, however many penalties apply.
+## Mult never goes below this, however many penalties apply. Combo values live in data/combos.
 @export var min_mult: float = 1.0
-## Mult for a burger with a bun-tagged layer at the bottom and at the top.
-@export var structure_bonus: float = 1.0
-## Mult for each cheese layer directly touching a patty layer.
-@export var melt_bonus: float = 0.5
-## Mult lost when sauce sits directly on the bottom bun.
-@export var soggy_penalty: float = 0.5
 
 @export_group("Smoothies")
 ## Units the jar holds.
@@ -25,10 +19,6 @@ extends Resource
 ## Liquid share of (liquid + thick) units that counts as a good thickness.
 @export var ratio_min: float = 0.3
 @export var ratio_max: float = 0.6
-@export var ratio_bonus: float = 1.0
-## Mult for each pair of ingredients that go together.
-@export var flavor_pair_bonus: float = 0.5
-@export var muddy_penalty: float = 1.0
 ## Colorful ingredients whose hues agree less than this (0..1) blend into a muddy color.
 @export var muddy_hue_coherence: float = 0.45
 
@@ -50,10 +40,6 @@ extends Resource
 ## Ingredient id -> count of units in the pantry at the start of a run (all at 100% freshness).
 @export var starting_pantry: Dictionary = {}
 @export var starting_fridge_slots: int = 3
-
-@export_group("Guidance")
-## Recipes on the daily specials board.
-@export var specials_count: int = 3
 
 @export_group("Kitchen Gadgets")
 @export var counter_slots: int = 3
