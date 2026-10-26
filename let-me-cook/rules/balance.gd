@@ -5,7 +5,7 @@ extends Resource
 @export_group("Run")
 @export var days_per_run: int = 7
 ## Rent due at the end of each day, in cents; index 0 is day 1. Extra days reuse the last value.
-@export var rent_curve: PackedInt32Array = PackedInt32Array([50, 100, 200, 330, 480, 650, 850])
+@export var rent_curve: PackedInt32Array = PackedInt32Array([70, 140, 240, 360, 505, 670, 870])
 ## Cents earned per point of score (rounded down per dish).
 @export var score_to_money: float = 5.0
 
