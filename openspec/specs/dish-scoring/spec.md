@@ -21,52 +21,65 @@ Each dish's score SHALL be `chips × mult`, where chips is the sum over its laye
 - **THEN** the ketchup layer contributes 2 chips
 
 ### Requirement: Burger structure and adjacency rules
-Burgers SHALL earn mult for structure and for specific adjacent layers, and lose mult for bad adjacencies. At minimum:
-- **Structure:** a bun-tagged ingredient as both the bottom and top layer gives a mult bonus.
-- **Melt:** a cheese layer directly touching a patty layer gives a mult bonus.
-- **Soggy:** a sauce layer directly on the bottom bun gives a mult penalty.
+Burgers SHALL earn mult from a configured list of combos, which are rules on structure, adjacency and order. Every combo that applies adds its mult, and several combos stack. Some combos count once per occurrence. At minimum:
+- **Bun ends:** a bun-tagged layer at the bottom and at the top.
+- **Melt** (each): cheese directly touching a patty.
+- **Sauced patty** (each): a sauce layer directly on top of a patty.
+- **Lettuce shield:** lettuce directly on the bottom bun.
+- **Fresh pair** (each): tomato directly touching lettuce.
+- **Tangy crunch** (each): pickles directly touching onion.
+- **Double decker:** patty, cheese, patty in a row.
+- **Bread sandwich:** only stale bread, ketchup, stale bread (bottom to top).
+- **Veg crown:** a veg-tagged layer directly under the top bun (sauce between them is allowed).
+- **Sauce duo:** ketchup directly touching mustard.
+- **Soggy bottom** (penalty): a sauce layer directly on the bottom bun.
 
 #### Scenario: Proper bun structure
 - **WHEN** a burger's bottom and top layers are both bun-tagged
-- **THEN** the structure bonus is added to mult
+- **THEN** the Bun ends bonus is added to mult
 
 #### Scenario: Melt bonus
 - **WHEN** cheese sits directly above or below a patty
-- **THEN** the melt bonus is added to mult
+- **THEN** the Melt bonus is added to mult
 
 #### Scenario: Soggy penalty
 - **WHEN** a sauce layer sits directly on top of the bottom bun
-- **THEN** the soggy penalty is subtracted from mult
+- **THEN** the Soggy bottom penalty is subtracted from mult
+
+#### Scenario: Combos stack
+- **WHEN** a burger is bun, lettuce, patty, ketchup, cheese, tomato, bun (bottom to top)
+- **THEN** it earns Bun ends, Lettuce shield, Sauced patty and Veg crown, and no Melt, because the ketchup separates the patty from the cheese
+
+#### Scenario: Struggle meal
+- **WHEN** a burger is stale bread, ketchup, stale bread
+- **THEN** it earns Bun ends and Bread sandwich
 
 ### Requirement: Smoothie ratio and flavor rules
-Smoothies SHALL earn mult for a good balance between liquid and thick ingredients (within a configured ratio range) and for configured flavor pairs. A smoothie whose blended color is classified as muddy (too many clashing colors) MUST receive a mult penalty.
+Smoothies SHALL earn mult from smoothie combos:
+- **Good thickness:** the liquid share of liquid and thick ingredients is within a configured range.
+- **Flavor pair** (each): a configured pair of ingredients that go together.
+- **Muddy color** (penalty): the blended color is classified as muddy because it has too many clashing colors.
+- Set combos that need specific ingredients together, in any amounts: **Banana Shake** (banana and milk), **Green Machine** (spinach, banana and milk), **Berry Blast** (strawberry, blueberry and yogurt).
 
 #### Scenario: Good ratio
 - **WHEN** a smoothie's liquid-to-thick ratio is within the configured range
-- **THEN** the ratio bonus is added to mult
+- **THEN** the Good thickness bonus is added to mult
 
 #### Scenario: Flavor pair
 - **WHEN** a smoothie contains both ingredients of a configured flavor pair (e.g. banana and berry)
 - **THEN** that pair's bonus is added to mult
 
-### Requirement: Named recipe bonuses
-The game SHALL define named recipes, each matching a specific composition. When a dish matches a named recipe, the dish MUST show the recipe's name and add its mult bonus. Sauce layers MUST be ignored when matching a recipe that lists no sauces. If a dish matches more than one recipe, only the one with the largest bonus MUST apply. The prototype MUST include at least: "Struggle Burger" (only stale bread and ketchup), "Classic Cheese" (bun, patty, cheese, bun, in that order), and "Green Machine" (spinach, banana, and milk), plus a few more of your choice.
-
-#### Scenario: Struggle Burger
-- **WHEN** a burger contains only stale bread and ketchup
-- **THEN** the dish is labeled "Struggle Burger" and the recipe's mult bonus is applied
-
-#### Scenario: Extra sauce doesn't break a recipe
-- **WHEN** a burger has bun, patty, ketchup, cheese, bun (bottom to top)
-- **THEN** it matches "Classic Cheese", because that recipe lists no sauces and the ketchup layer is ignored
-
-#### Scenario: Order matters for burger recipes
-- **WHEN** a burger has bun, cheese, patty, bun (bottom to top)
-- **THEN** it does not match "Classic Cheese"
+#### Scenario: Set combos stack
+- **WHEN** a smoothie contains spinach, banana and milk
+- **THEN** it earns both Green Machine and Banana Shake
 
 ### Requirement: Score breakdown and tally
-Scoring SHALL produce a breakdown listing every chip, mult and ×mult contribution with its source, in the order it was applied. When a dish is served, the game MUST play its breakdown back, showing chips and mult building up to the dish's score, then update the day's running total.
+Scoring SHALL produce a breakdown listing every chip, mult and ×mult contribution with its source, in the order it was applied. When a dish is served, the game MUST play its breakdown back, showing chips and mult building up to the dish's score, then update the day's running total. Consecutive identical contributions MUST be shown as one line with a count. The breakdown MUST fit inside the serving window, scrolling when it is longer than the window.
 
 #### Scenario: Tally shows contributions
-- **WHEN** the player serves a Classic Cheese burger
-- **THEN** the tally shows each ingredient's chips (with freshness), the melt bonus, the structure bonus, and the recipe bonus before showing the dish's score
+- **WHEN** the player serves a burger of bun, patty, cheese, bun
+- **THEN** the tally shows each ingredient's chips (with freshness), the Bun ends bonus and the Melt bonus before showing the dish's score
+
+#### Scenario: Tall burger
+- **WHEN** the player serves a 16-layer burger with four melts
+- **THEN** the melts are shown as one "Melt ×4" line, and the kitchen layout stays within the screen

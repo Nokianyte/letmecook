@@ -24,7 +24,7 @@ The tutorial SHALL start a fresh run and walk through these steps in order, each
 4. Top it with stale bread (buns on both ends).
 5. Serve it.
 6. Explanation of the tally: chips × mult (Next).
-7. Explanation of today's specials (Next).
+7. Explanation of the combo board: combos give mult, light up when the burger has them, and new ones are discovered by trying layer orders (Next).
 8. Close for the day.
 9. At night: the market and bundles (Next).
 10. The fridge (Next).
