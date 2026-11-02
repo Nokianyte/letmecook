@@ -15,6 +15,9 @@ func unit_of(id: StringName):
 func frames(n: int) -> void:
 	for i in n: await process_frame
 
+var check_meat_first := true
+
+
 func _initialize() -> void:
 	await process_frame
 	rs = root.get_node("RunState")
@@ -35,21 +38,58 @@ func _initialize() -> void:
 	check(rs.shop_stock.all(func(o): return o.quantity == 1 if o.ingredient.is_sauce() else o.quantity in [1, 2, 3]), "sauces are single bottles, solids 1-3")
 	check(rs.shop_stock.all(func(o): return o.price == ShopOffer.bulk_price(o.ingredient.price, o.quantity, b.bulk_discount_per_extra_unit)), "prices follow the bulk rule")
 	var patty: Ingredient = rs.get_ingredient(&"patty")
-	check([1, 2, 3].map(func(q): return ShopOffer.new(patty, q, 1.0, 0.1).price) == [40, 72, 96], "patties: 1 for $0.40, 2 for $0.72, 3 for $0.96")
+	check([1, 2, 3].map(func(q): return ShopOffer.new(patty, q, 1.0, 0.1).price) == [4, 7, 10], "patties: 1 for $4, 2 for $7, 3 for $10")
 	var onion: Ingredient = rs.get_ingredient(&"onion")
-	check([1, 2, 3].map(func(q): return ShopOffer.new(onion, q, 1.0, 0.1).price) == [10, 18, 24], "cheap items round to the cent")
-	check([Money.text(1250), Money.text(40), Money.text(5), Money.text(-105)] == ["$12.50", "$0.40", "$0.05", "-$1.05"], "money shows as dollars and cents")
-	rs.money = 1000
+	check([1, 2, 3].map(func(q): return ShopOffer.new(onion, q, 1.0, 0.1).price) == [1, 2, 2], "cheap items: rounding keeps small bundles sane")
+	print("[shop variety]")
+	var v_market := Shop.pool(rs.data, Dish.Station.BURGER)
+	var v_lettuce: Ingredient = rs.get_ingredient(&"lettuce")
+	var v_tomato: Ingredient = rs.get_ingredient(&"tomato")
+	var no_units: Array[IngredientUnit] = []
+	var no_offers: Array[ShopOffer] = []
+	var three_lettuce: Array[IngredientUnit] = [IngredientUnit.new(v_lettuce, 1.0), IngredientUnit.new(v_lettuce, 0.5), IngredientUnit.new(v_lettuce, 1.0)]
+	check(Shop.stock_weight(v_lettuce, three_lettuce, no_offers, b) < Shop.stock_weight(v_lettuce, no_units, no_offers, b), "owning an ingredient lowers its weight")
+	check(Shop.stock_weight(v_lettuce, three_lettuce, no_offers, b) > 0.0, "...but never to zero")
+	var one_slot: Array[ShopOffer] = [ShopOffer.new(v_tomato, 1, 1.0, 0.1)]
+	check(Shop.stock_weight(v_tomato, no_units, one_slot, b) < Shop.stock_weight(v_tomato, no_units, no_offers, b), "an ingredient already in the roll weighs less")
+	var variety_rng := RandomNumberGenerator.new()
+	variety_rng.seed = 77
+	var v_offered := {}
+	var tripled := 0
+	var uniform_tripled := 0
+	var rolls := 2000
+	for i in rolls:
+		var v_stock := Shop.roll_stock(variety_rng, rs.data, three_lettuce)
+		check_meat_first = check_meat_first and v_stock[0].ingredient.has_tag(&"meat") and v_stock[0].quantity == 1
+		var v_counts := {}
+		for v_offer in v_stock:
+			v_counts[v_offer.ingredient] = v_counts.get(v_offer.ingredient, 0) + 1
+			v_offered[v_offer.ingredient.id] = v_offered.get(v_offer.ingredient.id, 0) + 1
+		if v_counts.values().max() >= 3:
+			tripled += 1
+		var uniform := {}
+		for j in v_stock.size() - 1:
+			var pick: Ingredient = v_market[variety_rng.randi_range(0, v_market.size() - 1)]
+			uniform[pick] = uniform.get(pick, 0) + 1
+		if uniform.values().max() >= 3:
+			uniform_tripled += 1
+	check(v_offered.get(&"tomato", 0) > v_offered.get(&"lettuce", 0) * 1.5, "a missing ingredient comes up more than an owned one (tomato %d, lettuce %d)" % [v_offered.get(&"tomato", 0), v_offered.get(&"lettuce", 0)])
+	check(v_offered.get(&"lettuce", 0) > 0, "owned ingredients can still appear")
+	check(tripled * 3 < uniform_tripled, "three of a kind is much rarer than with uniform draws (%d vs %d of %d)" % [tripled, uniform_tripled, rolls])
+	check(check_meat_first, "the meat slot stays guaranteed")
+
+	check([Money.text(12), Money.text(0), Money.text(-5)] == ["$12", "$0", "-$5"], "money shows as whole dollars")
+	rs.money = 100
 	var offer: ShopOffer = rs.shop_stock[0]
 	var before: int = rs.count_of(offer.ingredient.id)
-	check(rs.buy_offer(offer) and offer.sold and rs.money == 1000 - offer.price, "buying deducts the price and marks it sold")
+	check(rs.buy_offer(offer) and offer.sold and rs.money == 100 - offer.price, "buying deducts the price and marks it sold")
 	check(rs.count_of(offer.ingredient.id) == before + offer.quantity, "bought units go to the pantry")
 	check(not rs.buy_offer(offer), "a sold slot can't be bought again")
 	rs.money = 0
 	check(not rs.buy_offer(rs.shop_stock[1]), "can't buy without money")
 
 	print("[rerolls]")
-	rs.money = 1000
+	rs.money = 100
 	var kept = rs.shop_stock[0]
 	var old1 = rs.shop_stock[1]
 	var costs := []
@@ -57,13 +97,13 @@ func _initialize() -> void:
 		costs.append(rs.reroll_cost())
 		rs.reroll_shop()
 	check(costs == [b.reroll_base_cost, b.reroll_base_cost + b.reroll_cost_step, b.reroll_base_cost + 2 * b.reroll_cost_step], "reroll costs rise: %s" % [costs])
-	check(rs.money == 1000 - costs.reduce(func(acc, c): return acc + c, 0), "rerolls are paid")
+	check(rs.money == 100 - costs.reduce(func(acc, c): return acc + c, 0), "rerolls are paid")
 	check(rs.shop_stock[0] != kept and rs.shop_stock[1] != old1, "a reroll replaces every slot, sold ones included")
 	check(rs.shop_stock.all(func(o): return not o.sold), "after a reroll every slot is for sale")
 	for o in rs.shop_stock.duplicate():
-		rs.money = 1000
+		rs.money = 100
 		rs.buy_offer(o)
-	rs.money = 1000
+	rs.money = 100
 	rs.reroll_shop()
 	check(rs.shop_stock.all(func(o): return not o.sold) and rs.shop_stock[0].quantity == 1 and rs.shop_stock[0].ingredient.has_tag(&"meat"), "buying out the market then rerolling restocks it (meat still first)")
 
@@ -81,11 +121,11 @@ func _initialize() -> void:
 	check(not rs.buy_staple(&"patty"), "non-staples can't be bought as staples")
 
 	print("[tools]")
-	rs.money = 1000
+	rs.money = 100
 	check(rs.blender_on_sale() and rs.buy_blender() and rs.has_blender and not rs.blender_on_sale(), "blender: bought once, then gone")
 	var slots: int = rs.fridge_slots
 	check(rs.buy_fridge_upgrade() and rs.fridge_slots == slots + b.fridge_upgrade_slots, "fridge upgrade adds slots")
-	rs.money = 10000
+	rs.money = 1000
 	while rs.fridge_upgrade_on_sale():
 		rs.buy_fridge_upgrade()
 	check(rs.fridge_slots == b.fridge_max_slots, "fridge stops at its max (%d)" % rs.fridge_slots)
@@ -121,7 +161,7 @@ func _initialize() -> void:
 	check(rs.phase == rs.Phase.RUN_OVER and not rs.run_won, "can't pay rent: run lost")
 	rs.new_run(10)
 	rs.day = b.days_per_run
-	rs.money = 10000
+	rs.money = 1000
 	rs.close_day()
 	check(rs.phase == rs.Phase.RUN_OVER and rs.run_won, "rent paid on the last day: run won")
 

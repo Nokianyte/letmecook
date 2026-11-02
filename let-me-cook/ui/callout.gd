@@ -5,7 +5,9 @@ const RISE := 42.0
 const DURATION := 0.9
 ## Emphasized callouts (mult, new combos) pop in from this scale and stay a bit longer.
 const POP_SCALE := 1.6
-const EMPHASIS_DURATION := 1.4
+const EMPHASIS_DURATION := 2.6
+const FADE_TIME := 0.25
+const EMPHASIS_FADE_TIME := 0.4
 
 
 func _init(text_value: String, color: Color, font_size: int = 16) -> void:
@@ -33,5 +35,5 @@ func pop(at: Vector2, delay: float, beside: bool = false, emphasis: bool = false
 	if emphasis:
 		scale = Vector2(POP_SCALE, POP_SCALE)
 		tween.parallel().tween_property(self, "scale", Vector2.ONE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "modulate:a", 0.0, 0.25)
+	tween.tween_property(self, "modulate:a", 0.0, EMPHASIS_FADE_TIME if emphasis else FADE_TIME)
 	tween.tween_callback(queue_free)

@@ -1,10 +1,7 @@
 class_name Money
-## Money is counted in whole cents (ints), so prices and payouts can have fractions
-## without float drift. This formats cents as dollars.
+## Money is whole dollars. Every amount on screen goes through this formatter.
 
 
-## 1250 -> "$12.50", 40 -> "$0.40", -5 -> "-$0.05".
-static func text(cents: int) -> String:
-	var sign := "-" if cents < 0 else ""
-	cents = absi(cents)
-	return "%s$%d.%02d" % [sign, cents / 100, cents % 100]
+## 12 -> "$12", -5 -> "-$5".
+static func text(amount: int) -> String:
+	return "%s$%d" % ["-" if amount < 0 else "", absi(amount)]

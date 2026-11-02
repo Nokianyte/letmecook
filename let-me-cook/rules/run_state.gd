@@ -200,11 +200,11 @@ func close_day() -> void:
 		return
 	rerolls_tonight = 0
 	staples_left = balance.staple_stock.duplicate()
-	shop_stock = Shop.roll_stock(rng, data)
+	shop_stock = Shop.roll_stock(rng, data, pantry)
 	gadget_offers = Shop.roll_gadget_offers(rng, data, counter)
 	smoothie_stock.clear()
 	if has_blender:
-		smoothie_stock = Shop.roll_smoothie_stock(rng, data)
+		smoothie_stock = Shop.roll_smoothie_stock(rng, data, pantry)
 	_set_phase(Phase.NIGHT)
 
 
@@ -244,8 +244,8 @@ func reroll_shop() -> bool:
 		return false
 	money -= cost
 	rerolls_tonight += 1
-	Shop.reroll(shop_stock, rng, data)
-	Shop.reroll_smoothie(smoothie_stock, rng, data)
+	Shop.reroll(shop_stock, rng, data, pantry)
+	Shop.reroll_smoothie(smoothie_stock, rng, data, pantry)
 	Shop.reroll_gadget_offers(gadget_offers, rng, data, counter)
 	changed.emit()
 	return true
@@ -304,7 +304,7 @@ func buy_blender() -> bool:
 	has_blender = true
 	# The smoothie bar opens right away.
 	if phase == Phase.NIGHT:
-		smoothie_stock = Shop.roll_smoothie_stock(rng, data)
+		smoothie_stock = Shop.roll_smoothie_stock(rng, data, pantry)
 	changed.emit()
 	return true
 
