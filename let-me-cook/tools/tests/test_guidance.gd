@@ -98,7 +98,7 @@ func _initialize() -> void:
 	await drop(&"bun")
 	check(tally.get_child(0).text == "If served now", "the window lists 'If served now'")
 	var listed = tally.get_children().map(func(c): return c.text)
-	check(listed.has("+1.0  Bun ends") and listed.has("+0.5  Melt") and listed.back().begins_with("≈"), "list shows the combos and the expected score (%s)" % [listed])
+	check(listed.has("+1.0  Bun ends") and listed.has("+0.5  Melt") and listed[-2].begins_with("≈") and listed.back() == "45 pts × $0.5 = $22", "list shows the combos and the expected score (%s)" % [listed])
 	var preview: ScoreResult = kitchen.live_preview.score(board.preview_dish())
 	clear_callouts()
 	await drop(&"lettuce")

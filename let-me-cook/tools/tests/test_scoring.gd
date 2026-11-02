@@ -123,7 +123,9 @@ func _initialize() -> void:
 	var texts = tally.get_children().map(func(c): return c.text)
 	check(texts[0] == "Burger", "tally title is the dish")
 	check(texts.any(func(x): return x.begins_with("+0.5  Melt")), "tally lists the melt bonus")
-	check(texts.back().begins_with("= 45 pts"), "tally ends with the score: %s" % texts.back())
+	check(texts[-2].begins_with("= 45 pts"), "tally ends with the score: %s" % texts[-2])
+	check(texts.back() == "45 pts × $0.5 = $22", "...and how it became money: %s" % texts.back())
+	check(ScoreTally.conversion_text(45, 24, 0.5) == "45 pts × $0.5 = $22 + $2 tips", "tips are shown in the conversion")
 	check(today.text == "Today: 45 pts", "day total updates after the tally (%s)" % today.text)
 	check(kitchen.get_node("%WindowTitle").text == "Served today: 1", "window counts the dish")
 

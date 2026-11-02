@@ -26,6 +26,8 @@ const PREVIEW_COLOR := Color(1, 1, 1, 0.55)
 
 ## Bumped on every play so an older tally stops when a new dish is served.
 var _generation := 0
+## Money per point, for the conversion line (set by the serving window).
+var money_rate := 0.5
 var _playing := false
 var _showing_preview := false
 
@@ -50,6 +52,7 @@ func show_preview(result: ScoreResult, money: int) -> void:
 		_add_line(line)
 	_add_label("%.1f chips × %.1f mult" % [result.chips, result.mult], Color(1, 1, 1, 0.7), 14)
 	_add_label("≈ %d pts   +%s" % [result.score, Money.text(money)], SCORE_COLOR, 18)
+	_add_label(conversion_text(result.score, money, money_rate), PREVIEW_COLOR)
 	_follow()
 
 
@@ -82,10 +85,21 @@ func play(dish: Dish) -> void:
 	if not await _wait(RESULT_DELAY, generation):
 		return
 	var final := _add_label("= %d pts   +%s" % [result.score, Money.text(result.money)], SCORE_COLOR, 20)
+	var conversion := _add_label(conversion_text(result.score, result.money, money_rate), PREVIEW_COLOR)
 	_follow()
 	_playing = false
 	finished.emit()
 	_fade_in(final, RESULT_SCALE, RESULT_TIME)
+	_fade_in(conversion, FADE_IN_SCALE, RESULT_TIME)
+
+
+## How a score became money: "45 pts × $0.5 = $22", plus tips if the payout has any.
+static func conversion_text(score: int, money: int, rate: float) -> String:
+	var base := floori(score * rate)
+	var text := "%d pts × %s = %s" % [score, Money.rate_text(rate), Money.text(base)]
+	if money > base:
+		text += " + %s tips" % Money.text(money - base)
+	return text
 
 
 ## Fades a new line in while it shrinks from `from_scale` down to its normal size,

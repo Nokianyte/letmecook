@@ -9,6 +9,7 @@ const SHOWN_DISHES := 2
 
 
 func _ready() -> void:
+	_tally.money_rate = RunState.balance.score_to_money
 	RunState.changed.connect(_rebuild)
 	RunState.dish_served.connect(_tally.play)
 	RunState.day_closed.connect(_tally.clear)

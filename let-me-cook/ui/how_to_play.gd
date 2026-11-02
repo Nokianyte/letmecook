@@ -14,7 +14,7 @@ You're broke. Build dishes from what you can afford, serve them, and make rent f
 [b]Scoring: chips × mult[/b]
 • [color=#8cc7ff]Chips[/color]: each ingredient's value × its freshness.
 • [color=#ff8c73]Mult[/color]: combos, ways of stacking ingredients (bun at bottom and top, cheese touching patty, sauce on a patty…). Several combos add up. The combo board above the plate lists the ones you know; build new arrangements to discover more. Some combos are penalties, like sauce right on the bottom bun.
-• Every point pays money.
+• Each dish pays {rate} per point, rounded down. The serving window shows the sum.
 
 [b]Kitchen Gadgets[/b]
 Bought at night, kept on a counter with 3 slots. They apply [b]left to right[/b], so order matters: add mult first, then ×mult. Drag cards to reorder; sell at night for half price.
@@ -63,7 +63,7 @@ func _ready() -> void:
 
 	var text := RichTextLabel.new()
 	text.bbcode_enabled = true
-	text.text = TEXT
+	text.text = TEXT.replace("{rate}", Money.rate_text(RunState.balance.score_to_money))
 	text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	text.add_theme_font_size_override("normal_font_size", 16)
 	text.add_theme_font_size_override("bold_font_size", 16)

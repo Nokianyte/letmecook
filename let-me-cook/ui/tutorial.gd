@@ -152,7 +152,7 @@ func _make_steps() -> Array[Dictionary]:
 		{"text": "Watch the list on the right: it shows what this burger scores if you serve it now. Serve it!",
 			"target": func() -> Rect2: return _rect(_kitchen_node("%ServeButton")),
 			"done": func() -> bool: return not RunState.served_today.is_empty() or RunState.phase != RunState.Phase.KITCHEN},
-		{"text": "Score = chips × mult. Chips come from each ingredient (fresher is worth more). Mult comes from combos and gadgets. Every point pays money.",
+		{"text": "Score = chips × mult. Chips come from each ingredient (fresher is worth more). Mult comes from combos and gadgets. Each point pays " + Money.rate_text(RunState.balance.score_to_money) + ", rounded down per dish.",
 			"target": func() -> Rect2: return _rect(_kitchen_node("%Window"))},
 		{"text": "These are combos: ways to stack ingredients that add mult. They light up when your burger has them. There are more to discover, so try different orders!",
 			"target": func() -> Rect2: return _rect(_kitchen_node("%ComboBoard"))},
