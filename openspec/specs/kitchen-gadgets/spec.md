@@ -50,11 +50,11 @@ The player SHALL be able to reorder gadgets on the counter by dragging them, in 
 - **THEN** it becomes the first gadget and the others shift right
 
 ### Requirement: Gadgets in scoring, in counter order
-After a dish's chips, station rules and recipe bonus are applied, each scoring gadget SHALL apply its effect in counter order, left to right. A gadget effect MUST be one of: add chips, add mult, or multiply mult (×mult), applied to the totals at that point. Each effect that applies MUST appear as a breakdown line named after the gadget. The minimum mult MUST be applied after all gadgets.
+After a dish's ingredient chips and combo bonuses are applied, each scoring gadget SHALL apply its effect in counter order, left to right. A gadget effect MUST be one of: add chips, add mult, or multiply mult (×mult), applied to the totals at that point. Each effect that applies MUST appear as a breakdown line named after the gadget. The minimum mult MUST be applied after all gadgets.
 
 #### Scenario: Order changes the score
-- **WHEN** a bun, patty, bun burger (mult 2 before gadgets) is scored with Cast-Iron Griddle (+0.5 mult per patty) left of Sesame Seeds (×1.2 mult with bun ends)
-- **THEN** mult is (2 + 0.5) × 1.2 = 3.0, and with the two gadgets swapped it is 2 × 1.2 + 0.5 = 2.9
+- **WHEN** a burger with mult of 1 has one scoring combo and Tower Mold is left of a ×2 mult effect
+- **THEN** mult is (1 + 0.25) × 2 = 2.50, and with the two effects swapped it is 1 × 2 + 0.25 = 2.25
 
 #### Scenario: A gadget that doesn't apply
 - **WHEN** a smoothie is scored with Cast-Iron Griddle on the counter
@@ -64,34 +64,34 @@ After a dish's chips, station rules and recipe bonus are applied, each scoring g
 When the tally plays a dish's breakdown, each gadget line SHALL show the gadget's name and effect, and the matching gadget on the counter MUST visibly react at that moment.
 
 #### Scenario: Gadget reacts during the tally
-- **WHEN** the tally reaches a line from Sesame Seeds
-- **THEN** the line reads "×1.20 Sesame Seeds" and the Sesame Seeds card on the counter wiggles
+- **WHEN** the tally reaches the Sesame Seeds line for a burger with two bun ends
+- **THEN** the line reads "+2.0 Sesame Seeds" and the Sesame Seeds card on the counter wiggles
 
 ### Requirement: Starting gadget set
 The prototype SHALL include at least these gadgets (prices are configured in data):
 
 | Gadget | Effect |
 |---|---|
-| Cast-Iron Griddle | +0.5 mult per patty layer |
+| Cast-Iron Griddle | +1 chip per patty layer in a burger |
 | Cheese Grater | +0.5 extra mult per cheese–patty melt (doubles the melt bonus) |
-| Sesame Seeds | ×1.2 mult if the burger has a bun-tagged layer at the bottom and the top |
-| Tower Mold | +0.5 mult per solid layer beyond the fifth |
+| Sesame Seeds | +1 chip per bun-tagged outer solid in a burger, counting a lone bun once |
+| Tower Mold | +0.25 mult per distinct burger combo that grants chips or mult |
 | Pro Squeeze Bottle | Sauce layers give ×2 chips (adds their chips again) |
 | Fruit Basket | +1 mult per distinct fruit in a smoothie |
-| Tip Jar | +$2 for every dish served |
+| Tip Jar | +10% of each dish's base payout, rounded to the nearest dollar |
 | Lucky Coin | The first reroll each night is free |
 
-#### Scenario: Tower Mold rewards tall burgers
-- **WHEN** a 7-solid-layer burger is scored with Tower Mold on the counter
-- **THEN** Tower Mold adds +1.0 mult (two layers beyond the fifth)
+#### Scenario: Tower Mold rewards distinct combos
+- **WHEN** a burger earns Bun ends, Melt twice, and Double decker with Tower Mold on the counter
+- **THEN** Tower Mold adds +0.75 mult for three distinct combos
 
 #### Scenario: Pro Squeeze Bottle
 - **WHEN** a burger with a ketchup layer worth 2 chips is scored with Pro Squeeze Bottle
 - **THEN** Pro Squeeze Bottle adds 2 chips
 
 #### Scenario: Tip Jar
-- **WHEN** the player serves a dish with Tip Jar on the counter
-- **THEN** money increases by the dish's payout plus $2
+- **WHEN** the player serves a dish with a $15 base payout and Tip Jar on the counter
+- **THEN** the tip rounds from $1.50 to $2 and the dish pays $17
 
 #### Scenario: Lucky Coin
 - **WHEN** the player rerolls for the first time in a night with Lucky Coin on the counter

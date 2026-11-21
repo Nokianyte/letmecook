@@ -1,6 +1,6 @@
 extends Control
 ## The combo board: a grid of every discovered combo of the station being built (name,
-## mult, rule), lit up while the dish in progress has it, plus a cell counting the combos
+## bonus, rule), lit up while the dish in progress has it, plus a cell counting the combos
 ## left to discover.
 
 const NAME_COLOR := Color(1.0, 0.85, 0.35)
@@ -137,7 +137,7 @@ func _rebuild() -> void:
 
 func _make_chip(combo: Combo) -> Dictionary:
 	var panel := _panel()
-	panel.tooltip_text = "%s%s: %s, %s mult%s" % ["Secret combo " if combo.secret else "", combo.display_name, combo.rule, _value_text(combo),
+	panel.tooltip_text = "%s%s: %s, %s%s" % ["Secret combo " if combo.secret else "", combo.display_name, combo.rule, combo.bonus_text(),
 			" each time" if combo.each else ""]
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", -2)
@@ -153,7 +153,7 @@ func _make_chip(combo: Combo) -> Dictionary:
 	row.add_child(name_label)
 	var count := _label("", Color.WHITE, NAME_SIZE)
 	row.add_child(count)
-	row.add_child(_label(_value_text(combo), color, NAME_SIZE))
+	row.add_child(_label(combo.bonus_text().trim_suffix(" mult"), color, NAME_SIZE))
 	box.add_child(_label(combo.rule, RULE_COLOR, RULE_SIZE))
 	_grid.add_child(panel)
 	return {"panel": panel, "count": count}
@@ -192,7 +192,3 @@ func _label(text: String, color: Color, font_size: int) -> Label:
 	label.add_theme_color_override("font_color", color)
 	label.add_theme_font_size_override("font_size", font_size)
 	return label
-
-
-static func _value_text(combo: Combo) -> String:
-	return "%s%.1f" % ["+" if combo.mult >= 0 else "−", absf(combo.mult)]

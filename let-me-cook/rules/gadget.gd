@@ -17,7 +17,7 @@ func modify_score(_dish: Dish, _result: ScoreResult) -> void:
 
 
 ## Extra money for a served dish (e.g. tips).
-func on_dish_served(_dish: Dish) -> int:
+func on_dish_served(_base_money: int) -> int:
 	return 0
 
 

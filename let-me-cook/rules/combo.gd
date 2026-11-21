@@ -34,6 +34,8 @@ enum Anchor {
 @export var rule: String
 @export var station: Dish.Station = Dish.Station.BURGER
 @export var mult: float = 0.5
+## A flat chip bonus in place of mult when nonzero.
+@export var chips: int = 0
 ## Shown on the combo board before it's discovered.
 @export var starter: bool = false
 ## Not counted on the board until discovered (crossover combos).
@@ -58,3 +60,9 @@ static func entry_matches(entry: StringName, ingredient: Ingredient) -> bool:
 
 func is_penalty() -> bool:
 	return mult < 0.0
+
+
+func bonus_text() -> String:
+	if chips != 0:
+		return "%+d chips" % chips
+	return "%s%.1f mult" % ["−" if mult < 0.0 else "+", absf(mult)]

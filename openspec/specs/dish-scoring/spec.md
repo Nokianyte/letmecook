@@ -1,12 +1,12 @@
 # dish-scoring Specification
 
 ## Purpose
-Defines how a finished dish is scored, Balatro-style: ingredient quality gives chips, clever combinations give mult, and there are no customer preferences.
+Defines how a finished dish is scored, Balatro-style: ingredient quality gives chips, combinations give chips or mult, and there are no customer preferences.
 
 ## Requirements
 
 ### Requirement: Chips times mult
-Each dish's score SHALL be `chips × mult`, where chips is the sum over its layers of `base value × freshness × amount` (freshness from 0% to 100%; amount is 1 for a solid ingredient and the number of doses for a sauce layer, whose base value is per dose), and mult is `1` plus all mult bonuses and penalties that apply. Kitchen Gadgets then apply in counter order and may add chips, add mult, or multiply mult (see kitchen-gadgets). Mult MUST NOT go below a configured minimum (default 1), checked after all of these.
+Each dish's score SHALL be `chips × mult`, where chips is the sum over its layers of `base value × freshness × amount` (freshness from 0% to 100%; amount is 1 for a solid ingredient and the number of doses for a sauce layer, whose base value is per dose) plus flat chip bonuses from combos, and mult is `1` plus all mult bonuses and penalties that apply. Kitchen Gadgets then apply in counter order and may add chips, add mult, or multiply mult (see kitchen-gadgets). Mult MUST NOT go below a configured minimum (default 1), checked after all of these.
 
 #### Scenario: Plain dish
 - **WHEN** a dish holds a patty (base 8, freshness 100%) and stale bread (base 2, freshness 100%), and no bonuses apply
@@ -21,8 +21,8 @@ Each dish's score SHALL be `chips × mult`, where chips is the sum over its laye
 - **THEN** the ketchup layer contributes 2 chips
 
 ### Requirement: Burger structure and adjacency rules
-Burgers SHALL earn mult from a configured list of combos, which are rules on structure, adjacency and order. Every combo that applies adds its mult, and several combos stack. Some combos count once per occurrence. At minimum:
-- **Bun ends:** a bun-tagged layer at the bottom and at the top.
+Burgers SHALL earn chips or mult from a configured list of combos based on structure, adjacency and order. Several combos can stack. Some combos count once per occurrence. At minimum:
+- **Bun ends:** +8 chips when two distinct bun-tagged layers are the bottom and top solid layers.
 - **Melt** (each): cheese directly touching a patty.
 - **Sauced patty** (each): a sauce layer directly on top of a patty.
 - **Lettuce shield:** lettuce directly on the bottom bun.
@@ -36,7 +36,7 @@ Burgers SHALL earn mult from a configured list of combos, which are rules on str
 
 #### Scenario: Proper bun structure
 - **WHEN** a burger's bottom and top layers are both bun-tagged
-- **THEN** the Bun ends bonus is added to mult
+- **THEN** Bun ends adds 8 chips
 
 #### Scenario: Melt bonus
 - **WHEN** cheese sits directly above or below a patty

@@ -164,10 +164,11 @@ func serve(dish: Dish) -> ScoreResult:
 	served_today.append(dish)
 	day_score += dish.result.score
 	total_score += dish.result.score
-	dish.result.money = money_for(dish.result.score)
+	var base_money := money_for(dish.result.score)
+	dish.result.money = base_money
 	for gadget in counter:
 		if gadget != null:
-			var tip := gadget.on_dish_served(dish)
+			var tip := gadget.on_dish_served(base_money)
 			if tip > 0:
 				dish.result.add_money(gadget.display_name, tip, gadget.id)
 	money += dish.result.money

@@ -50,7 +50,7 @@ func show_preview(result: ScoreResult, money: int) -> void:
 	_add_label("If served now", PREVIEW_COLOR, 14)
 	for line in group_lines(result.lines):
 		_add_line(line)
-	_add_label("%.1f chips × %.1f mult" % [result.chips, result.mult], Color(1, 1, 1, 0.7), 14)
+	_add_label("%.1f chips × %s mult" % [result.chips, _mult_text(result.mult)], Color(1, 1, 1, 0.7), 14)
 	_add_label("≈ %d pts   +%s" % [result.score, Money.text(money)], SCORE_COLOR, 18)
 	_add_label(conversion_text(result.score, money, money_rate), PREVIEW_COLOR)
 	_follow()
@@ -79,7 +79,7 @@ func play(dish: Dish) -> void:
 		_fade_in(_add_line(line), FADE_IN_SCALE, FADE_IN_TIME)
 		line_played.emit(line)
 		move_child(running, get_child_count() - 1)
-		running.text = "%.1f chips × %.1f mult" % [chips, maxf(mult, result.min_mult)]
+		running.text = "%.1f chips × %s mult" % [chips, _mult_text(maxf(mult, result.min_mult))]
 		_follow()
 
 	if not await _wait(RESULT_DELAY, generation):
@@ -143,12 +143,16 @@ static func line_text(line: Dictionary) -> String:
 		ScoreResult.Kind.CHIPS:
 			return "+%.1f  %s" % [line.value, label]
 		ScoreResult.Kind.MULT:
-			return "%s%.1f  %s" % ["+" if line.value >= 0 else "−", absf(line.value), label]
+			return "%s%s  %s" % ["+" if line.value >= 0 else "−", _mult_text(absf(line.value)), label]
 		ScoreResult.Kind.X_MULT:
 			return "×%.2f  %s" % [line.value, label]
 		ScoreResult.Kind.MONEY:
 			return "+%s  %s" % [Money.text(int(line.value)), label]
 	return label
+
+
+static func _mult_text(value: float) -> String:
+	return ("%.1f" if is_equal_approx(value, snappedf(value, 0.1)) else "%.2f") % value
 
 
 static func line_color(line: Dictionary) -> Color:

@@ -1,7 +1,7 @@
 class_name Scoring
 ## Balatro-style dish scoring: score = chips × mult.
-## Chips come from ingredient quality (base × freshness × amount); mult from combos,
-## the arrangements listed in data/combos (structure, adjacency, sets).
+## Ingredient chips use base × freshness × amount. Combos add chips or mult
+## based on the arrangements listed in data/combos.
 
 
 ## `counter` is the run's gadgets in counter order (empty slots are null).
@@ -39,11 +39,11 @@ static func combo_counts(result: ScoreResult) -> Dictionary:
 
 
 ## Money a dish with this score would pay, tips included.
-static func expected_money(score: int, dish: Dish, balance: Balance, counter: Array[Gadget]) -> int:
-	var money := floori(score * balance.score_to_money)
+static func expected_money(base_money: int, counter: Array[Gadget]) -> int:
+	var money := base_money
 	for gadget in counter:
 		if gadget != null:
-			money += gadget.on_dish_served(dish)
+			money += gadget.on_dish_served(base_money)
 	return money
 
 
@@ -54,20 +54,20 @@ static func _apply_combo(combo: Combo, dish: Dish, balance: Balance, result: Sco
 	match combo.kind:
 		Combo.Kind.SEQUENCE:
 			for i in sequence_count(combo, ingredients):
-				result.add_mult(combo.display_name, combo.mult, &"", combo.id)
+				result.add_combo(combo, combo.display_name)
 		Combo.Kind.SET:
 			if _has_set(combo, ingredients):
-				result.add_mult(combo.display_name, combo.mult, &"", combo.id)
+				result.add_combo(combo, combo.display_name)
 		Combo.Kind.THICKNESS:
 			var ratio := Smoothie.liquid_ratio(ingredients)
 			if ratio >= balance.ratio_min and ratio <= balance.ratio_max:
-				result.add_mult(combo.display_name, combo.mult, &"", combo.id)
+				result.add_combo(combo, combo.display_name)
 		Combo.Kind.FLAVOR_PAIR:
 			for pair in Smoothie.flavor_pairs(ingredients):
-				result.add_mult("%s: %s" % [combo.display_name, pair], combo.mult, &"", combo.id)
+				result.add_combo(combo, "%s: %s" % [combo.display_name, pair])
 		Combo.Kind.MUDDY:
 			if Smoothie.is_muddy(ingredients, balance):
-				result.add_mult(combo.display_name, combo.mult, &"", combo.id)
+				result.add_combo(combo, combo.display_name)
 
 
 ## How many times a SEQUENCE combo occurs in these layers (bottom to top); at most 1

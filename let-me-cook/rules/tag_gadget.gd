@@ -22,6 +22,10 @@ enum Count {
 	SOLIDS_BEYOND,
 	## Total chips of sauce layers (use ADD_CHIPS: amount is a multiplier of those chips).
 	SAUCE_CHIPS,
+	## Outer solid layers with `tag`, counting a lone solid only once.
+	ENDS_WITH_TAG,
+	## Distinct triggered combos that added chips or mult.
+	DISTINCT_POSITIVE_COMBOS,
 }
 enum Effect { ADD_CHIPS, ADD_MULT, X_MULT }
 
@@ -41,7 +45,7 @@ func modify_score(dish: Dish, result: ScoreResult) -> void:
 		return
 	if condition == Condition.BUN_ENDS and not Scoring.has_bun_ends(dish):
 		return
-	var n := _count(dish)
+	var n := _count(dish, result)
 	if n <= 0.0:
 		return
 	match effect:
@@ -53,7 +57,7 @@ func modify_score(dish: Dish, result: ScoreResult) -> void:
 			result.add_x_mult(display_name, pow(amount, n), id)
 
 
-func _count(dish: Dish) -> float:
+func _count(dish: Dish, result: ScoreResult) -> float:
 	match count:
 		Count.ONCE:
 			return 1.0
@@ -76,4 +80,17 @@ func _count(dish: Dish) -> float:
 				if layer.ingredient.is_sauce():
 					chips += layer.chips()
 			return chips
+		Count.ENDS_WITH_TAG:
+			var solids := dish.layers.filter(func(l: DishLayer) -> bool: return not l.ingredient.is_sauce())
+			if solids.is_empty():
+				return 0.0
+			var first := int(solids.front().ingredient.has_tag(tag))
+			var last := int(solids.size() > 1 and solids.back().ingredient.has_tag(tag))
+			return first + last
+		Count.DISTINCT_POSITIVE_COMBOS:
+			var ids := {}
+			for line in result.lines:
+				if line.has("combo") and line.value > 0.0:
+					ids[line.combo] = true
+			return ids.size()
 	return 0.0

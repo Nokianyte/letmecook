@@ -6,12 +6,12 @@
 script = ExtResource("1_gadget")
 id = &"tower_mold"
 display_name = "Tower Mold"
-description = "+0.5 mult per solid layer beyond the fifth"
+description = "+0.25 mult per unique scoring combo in a burger"
 price = 5
 station = 1
 condition = 0
-count = 4
+count = 7
 tag = &""
-threshold = 5
+threshold = 0
 effect = 1
-amount = 0.5
+amount = 0.25

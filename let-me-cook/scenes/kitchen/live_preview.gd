@@ -75,7 +75,7 @@ func _show_list() -> void:
 		station = Dish.Station.SMOOTHIE if _shown == Dish.Station.BURGER else Dish.Station.BURGER
 		dish = _dish(station)
 	var result := score(dish)
-	var money := Scoring.expected_money(result.score, dish, RunState.balance, RunState.counter) if result != null else 0
+	var money := Scoring.expected_money(RunState.money_for(result.score), RunState.counter) if result != null else 0
 	_tally.show_preview(result, money)
 	if _combo_board != null:
 		_combo_board.show_dish(station, result)
@@ -107,9 +107,10 @@ func _announce(station: Dish.Station, result: ScoreResult, discovered: Array[Com
 	var above := 0.0  # height of the callouts already stacked above the dish
 	for i in result.lines.size():
 		var line: Dictionary = result.lines[i]
-		var beside: bool = line.kind == ScoreResult.Kind.CHIPS and line.source == &"" and station == Dish.Station.BURGER
+		var ingredient_chips: bool = line.kind == ScoreResult.Kind.CHIPS and line.source == &"" and not line.has("combo")
+		var beside := ingredient_chips and station == Dish.Station.BURGER
 		var at := top
-		if line.kind == ScoreResult.Kind.CHIPS and line.source == &"":
+		if ingredient_chips:
 			if beside and layer_index < layer_positions.size():
 				at = layer_positions[layer_index]
 			layer_index += 1
@@ -124,13 +125,13 @@ func _announce(station: Dish.Station, result: ScoreResult, discovered: Array[Com
 		delay += STAGGER
 	for key in old:
 		var line: Dictionary = old[key]
-		if not current.has(key) and line.kind != ScoreResult.Kind.CHIPS and line.value > 0:
+		if not current.has(key) and (line.kind != ScoreResult.Kind.CHIPS or line.has("combo")) and line.value > 0:
 			var callout := _make("lost: %s" % line.label, LOST_COLOR, SMALL_SIZE)
 			callout.pop(top - Vector2(0, above), delay)
 			above += callout.get_minimum_size().y + STACK_GAP
 			delay += STAGGER
 	for combo in discovered:
-		var callout := _make("New combo! %s %s" % [combo.display_name, _value(combo.mult)], NEW_COMBO_COLOR, NEW_COMBO_SIZE)
+		var callout := _make("New combo! %s %s" % [combo.display_name, combo.bonus_text()], NEW_COMBO_COLOR, NEW_COMBO_SIZE)
 		callout.pop(top - Vector2(0, above), delay + STAGGER, false, true)
 		above += callout.get_minimum_size().y + STACK_GAP
 		delay += STAGGER
@@ -140,10 +141,6 @@ func _make(text: String, color: Color, font_size: int) -> Callout:
 	var callout := Callout.new(text, color, font_size)
 	_overlay.add_child(callout)
 	return callout
-
-
-static func _value(mult: float) -> String:
-	return "%s%.1f" % ["+" if mult >= 0 else "−", absf(mult)]
 
 
 ## Lines keyed by kind, label and value, numbered when repeated (two patties are two keys).

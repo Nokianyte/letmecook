@@ -1,12 +1,12 @@
 # combo-board Specification
 
 ## Purpose
-Shows the player which combos (the rules that give or take mult) they know about, lights up the ones the dish in progress already has, and grows as new combos are discovered by building them.
+Shows the player which combos (the rules that award chips or adjust mult) they know about, lights up the ones the dish in progress already has, and grows as new combos are discovered by building them.
 
 ## Requirements
 
 ### Requirement: Board of discovered combos
-The kitchen SHALL show a combo board above the plate listing every discovered combo of the current station: its name, a short rule, and its mult value (penalties in red). The board MUST also show how many combos of that station are still undiscovered. Secret combos MUST NOT be counted or listed until discovered; while any of the station's secret combos are undiscovered, the board only hints that secret ones exist. Discovered secret combos are marked as secret. Smoothie combos MUST only appear once the blender is owned. The board's size MUST NOT change while a burger is being built.
+The kitchen SHALL show a combo board above the plate listing every discovered combo of the current station: its name, a short rule, and its chip or mult value (penalties in red). The board MUST also show how many combos of that station are still undiscovered. Secret combos MUST NOT be counted or listed until discovered; while any of the station's secret combos are undiscovered, the board only hints that secret ones exist. Discovered secret combos are marked as secret. Smoothie combos MUST only appear once the blender is owned. The board's size MUST NOT change while a burger is being built.
 
 #### Scenario: Fresh save
 - **WHEN** a player who has discovered nothing starts their first run

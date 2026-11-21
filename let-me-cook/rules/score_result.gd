@@ -8,7 +8,7 @@ enum Kind { CHIPS, MULT, X_MULT, MONEY }
 ## CHIPS lines add to chips; MULT lines add to mult (negative for penalties);
 ## X_MULT lines multiply the mult so far; MONEY lines are extra payout (tips).
 ## `source` is the id of the gadget that made the line, or &"" for the base rules.
-## Mult lines from combos also have "combo": the combo's id.
+## Lines from combos also have "combo": the combo's id.
 var lines: Array[Dictionary] = []
 var chips: float = 0.0
 var mult: float = 1.0
@@ -19,8 +19,11 @@ var min_mult: float = 1.0
 var money: int = 0
 
 
-func add_chips(label: String, value: float, source: StringName = &"") -> void:
-	lines.append({"kind": Kind.CHIPS, "label": label, "value": value, "source": source})
+func add_chips(label: String, value: float, source: StringName = &"", combo: StringName = &"") -> void:
+	var line := {"kind": Kind.CHIPS, "label": label, "value": value, "source": source}
+	if combo != &"":
+		line["combo"] = combo
+	lines.append(line)
 	chips += value
 
 
@@ -35,6 +38,13 @@ func add_mult(label: String, value: float, source: StringName = &"", combo: Stri
 func add_x_mult(label: String, value: float, source: StringName = &"") -> void:
 	lines.append({"kind": Kind.X_MULT, "label": label, "value": value, "source": source})
 	mult *= value
+
+
+func add_combo(combo: Combo, label: String) -> void:
+	if combo.chips != 0:
+		add_chips(label, combo.chips, &"", combo.id)
+	else:
+		add_mult(label, combo.mult, &"", combo.id)
 
 
 func add_money(label: String, value: int, source: StringName = &"") -> void:

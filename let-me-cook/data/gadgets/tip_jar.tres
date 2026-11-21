@@ -6,6 +6,6 @@
 script = ExtResource("1_gadget")
 id = &"tip_jar"
 display_name = "Tip Jar"
-description = "+$2 for every dish served"
+description = "+10% of each dish's base payout, rounded to the nearest dollar"
 price = 6
-tip = 2
+tip_rate = 0.1
